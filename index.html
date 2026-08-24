@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full">
+<html lang="id" class="h-full" :class="isDarkMode ? 'dark' : ''" x-data="appData()" x-init="init()">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -18,10 +19,6 @@
                             500: '#0bc5ea',
                             600: '#00b5d8',
                             700: '#0096c7',
-                        },
-                        dark: {
-                            800: '#1a202c',
-                            900: '#0f172a',
                         }
                     }
                 }
@@ -37,13 +34,13 @@
         body { font-family: 'Poppins', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 h-full" x-data="appData()" x-init="init()">
+<body class="h-full transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'">
 
     <!-- NOTIFIKASI TOAST -->
     <div class="fixed top-5 right-5 z-50 space-y-2">
         <template x-for="toast in toasts" :key="toast.id">
             <div x-transition class="px-4 py-3 rounded-xl shadow-lg border text-sm font-medium flex items-center space-x-2"
-                 :class="toast.type === 'success' ? 'bg-slate-800 border-cyan-500 text-cyan-400' : 'bg-slate-800 border-red-500 text-red-400'">
+                 :class="isDarkMode ? 'bg-slate-800 border-cyan-500 text-cyan-400' : 'bg-white border-cyan-400 text-cyan-700'">
                 <span x-text="toast.message"></span>
             </div>
         </template>
@@ -51,87 +48,131 @@
 
     <!-- ================= LANDING PAGE ================= -->
     <div x-show="currentView === 'landing'" class="min-h-full flex flex-col justify-between">
-        <header class="w-full py-6 px-6 md:px-12 flex justify-between items-center border-b border-slate-800">
+        <header class="w-full py-6 px-6 md:px-12 flex justify-between items-center border-b" :class="isDarkMode ? 'border-slate-800' : 'border-slate-200'">
             <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 rounded-xl bg-cyan-500 flex items-center justify-center font-bold text-dark-900 text-xl">G</div>
-                <span class="text-xl font-bold tracking-wide text-white">Giga<span class="text-cyan-400">Job</span></span>
+                <div class="w-10 h-10 rounded-xl bg-cyan-500 flex items-center justify-center font-bold text-slate-950 text-xl">G</div>
+                <span class="text-xl font-bold tracking-wide" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Giga<span class="text-cyan-500">Job</span></span>
             </div>
-            <div class="space-x-4">
-                <button @click="currentView = 'login'" class="text-sm font-medium text-slate-300 hover:text-cyan-400 transition">Login</button>
-                <button @click="currentView = 'register'" class="bg-cyan-500 hover:bg-cyan-600 text-dark-900 font-semibold px-4 py-2 rounded-xl text-sm transition shadow-lg shadow-cyan-500/20">Daftar Sekarang</button>
+            <div class="flex items-center space-x-4">
+                <button @click="toggleTheme" class="p-2 rounded-xl border text-sm transition" :class="isDarkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-slate-300 text-slate-700 hover:bg-slate-100'">
+                    <i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-4 h-4"></i>
+                </button>
+                <button @click="currentView = 'login'" class="text-sm font-medium transition" :class="isDarkMode ? 'text-slate-300 hover:text-cyan-400' : 'text-slate-600 hover:text-cyan-600'">Login</button>
+                <button @click="currentView = 'register'" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-semibold px-4 py-2 rounded-xl text-sm transition shadow-lg shadow-cyan-500/25">Daftar</button>
             </div>
         </header>
 
         <main class="max-w-4xl mx-auto px-6 text-center py-20">
-            <span class="bg-cyan-500/10 text-cyan-400 text-xs font-semibold px-3 py-1 rounded-full border border-cyan-500/20">Platform Job Digital Terpercaya</span>
-            <h1 class="text-4xl md:text-6xl font-extrabold mt-6 text-white leading-tight">Kerja Sampingan Digital, <br><span class="text-cyan-400">Hasil Nyata Setiap Hari.</span></h1>
-            <p class="text-slate-400 mt-4 max-w-xl mx-auto text-sm md:text-base">Selesaikan pekerjaan online aman dan legal. Job Gmail — Rp1.500 / akun khusus berhasil diselesaikan.</p>
+            <span class="bg-cyan-500/10 text-cyan-500 text-xs font-semibold px-3 py-1 rounded-full border border-cyan-500/20">Platform Job Digital Terpercaya</span>
+            <h1 class="text-4xl md:text-6xl font-extrabold mt-6 leading-tight" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Kerja Sampingan Digital, <br><span class="text-cyan-500">Hasil Nyata Setiap Hari.</span></h1>
+            <p class="mt-4 max-w-xl mx-auto text-sm md:text-base" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Selesaikan pekerjaan online aman dan legal. Job Gmail — Rp1.500 / akun khusus berhasil diselesaikan.</p>
             <div class="mt-8 flex justify-center space-x-4">
-                <button @click="currentView = 'register'" class="bg-cyan-500 hover:bg-cyan-600 text-dark-900 font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-cyan-500/30 flex items-center space-x-2">
+                <button @click="currentView = 'register'" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-cyan-500/30 flex items-center space-x-2">
                     <span>Mulai Kerja Sekarang</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </div>
         </main>
 
-        <footer class="py-6 text-center text-xs text-slate-500 border-t border-slate-800">
+        <footer class="py-6 text-center text-xs border-t" :class="isDarkMode ? 'border-slate-800 text-slate-500' : 'border-slate-200 text-slate-400'">
             &copy; 2026 GigaJob Platform. Aman, Legal, dan Tanpa Kredensial Sensitif.
         </footer>
     </div>
 
     <!-- ================= HALAMAN LOGIN ================= -->
-    <div x-show="currentView === 'login'" class="min-h-screen flex items-center justify-center px-4">
-        <div class="max-w-md w-full bg-slate-800 border border-slate-700/60 p-8 rounded-2xl shadow-xl">
+    <div x-show="currentView === 'login'" class="min-h-screen flex items-center justify-center px-4 relative">
+        <div class="absolute top-6 right-6">
+            <button @click="toggleTheme" class="p-2.5 rounded-xl border text-sm transition" :class="isDarkMode ? 'border-slate-700 text-slate-300 bg-slate-800' : 'border-slate-300 text-slate-700 bg-white'">
+                <i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <div class="max-w-md w-full border p-8 rounded-2xl shadow-xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60' : 'bg-white border-slate-200'">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-white">Selamat Datang Kembali</h2>
-                <p class="text-xs text-slate-400 mt-1">Masuk untuk melanjutkan pekerjaan sampinganmu</p>
+                <h2 class="text-2xl font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Selamat Datang Kembali</h2>
+                <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Masuk untuk melanjutkan pekerjaan sampinganmu</p>
             </div>
             <form @submit.prevent="handleLogin" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Email / Username</label>
-                    <input type="text" x-model="loginForm.identifier" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                    <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Email / Username</label>
+                    <input type="text" x-model="loginForm.identifier" required class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
-                    <input type="password" x-model="loginForm.password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-medium" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Password</label>
+                        <a href="#" @click.prevent="currentView = 'forgot'" class="text-xs text-cyan-500 hover:underline">Lupa sandi?</a>
+                    </div>
+                    <input type="password" x-model="loginForm.password" required class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                 </div>
-                <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-dark-900 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-500/20">Login</button>
+                <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-500/25">Login</button>
             </form>
-            <p class="text-center text-xs text-slate-400 mt-6">Belum punya akun? <a href="#" @click.prevent="currentView = 'register'" class="text-cyan-400 font-semibold hover:underline">Daftar</a></p>
+            <p class="text-center text-xs mt-6" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Belum punya akun? <a href="#" @click.prevent="currentView = 'register'" class="text-cyan-500 font-semibold hover:underline">Daftar</a></p>
+        </div>
+    </div>
+
+    <!-- ================= HALAMAN LUPA SANDI ================= -->
+    <div x-show="currentView === 'forgot'" class="min-h-screen flex items-center justify-center px-4 relative">
+        <div class="absolute top-6 right-6">
+            <button @click="toggleTheme" class="p-2.5 rounded-xl border text-sm transition" :class="isDarkMode ? 'border-slate-700 text-slate-300 bg-slate-800' : 'border-slate-300 text-slate-700 bg-white'">
+                <i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <div class="max-w-md w-full border p-8 rounded-2xl shadow-xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60' : 'bg-white border-slate-200'">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="key-round" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-2xl font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Atur Ulang Sandi</h2>
+                <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Masukkan alamat email terdaftar untuk menerima link/kode pemulihan.</p>
+            </div>
+            <form @submit.prevent="handleForgotSend" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Alamat Email Terdaftar</label>
+                    <input type="email" x-model="forgotEmail" required placeholder="contoh: anda@gmail.com" class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
+                </div>
+                <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-500/25">Kirim Kode / Link Pemulihan</button>
+            </form>
+            <p class="text-center text-xs mt-6">
+                <a href="#" @click.prevent="currentView = 'login'" class="text-cyan-500 font-semibold hover:underline">&larr; Kembali ke Login</a>
+            </p>
         </div>
     </div>
 
     <!-- ================= HALAMAN DAFTAR ================= -->
-    <div x-show="currentView === 'register'" class="min-h-screen flex items-center justify-center px-4 py-10">
-        <div class="max-w-md w-full bg-slate-800 border border-slate-700/60 p-8 rounded-2xl shadow-xl">
+    <div x-show="currentView === 'register'" class="min-h-screen flex items-center justify-center px-4 py-10 relative">
+        <div class="absolute top-6 right-6">
+            <button @click="toggleTheme" class="p-2.5 rounded-xl border text-sm transition" :class="isDarkMode ? 'border-slate-700 text-slate-300 bg-slate-800' : 'border-slate-300 text-slate-700 bg-white'">
+                <i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-4 h-4"></i>
+            </button>
+        </div>
+        <div class="max-w-md w-full border p-8 rounded-2xl shadow-xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60' : 'bg-white border-slate-200'">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-white">Buat Akun Baru</h2>
-                <p class="text-xs text-slate-400 mt-1">Mulai hasilkan uang dari rumah dengan mudah</p>
+                <h2 class="text-2xl font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Buat Akun Baru</h2>
+                <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Mulai hasilkan uang dari rumah dengan mudah</p>
             </div>
             <form @submit.prevent="handleRegister" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Nama Lengkap</label>
-                    <input type="text" x-model="regForm.name" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+                    <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Nama Lengkap</label>
+                    <input type="text" x-model="regForm.name" required class="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Username</label>
-                    <input type="text" x-model="regForm.username" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+                    <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Username</label>
+                    <input type="text" x-model="regForm.username" required class="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Email</label>
-                    <input type="email" x-model="regForm.email" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+                    <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Email</label>
+                    <input type="email" x-model="regForm.email" required class="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Password</label>
-                    <input type="password" x-model="regForm.password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+                    <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Password</label>
+                    <input type="password" x-model="regForm.password" required class="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Konfirmasi Password</label>
-                    <input type="password" x-model="regForm.confirmPassword" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+                    <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Konfirmasi Password</label>
+                    <input type="password" x-model="regForm.confirmPassword" required class="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                 </div>
-                <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-dark-900 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 mt-2">Buat Akun</button>
+                <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-500/25 mt-2">Buat Akun</button>
             </form>
-            <p class="text-center text-xs text-slate-400 mt-6">Sudah punya akun? <a href="#" @click.prevent="currentView = 'login'" class="text-cyan-400 font-semibold hover:underline">Login</a></p>
+            <p class="text-center text-xs mt-6" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Sudah punya akun? <a href="#" @click.prevent="currentView = 'login'" class="text-cyan-500 font-semibold hover:underline">Login</a></p>
         </div>
     </div>
 
@@ -139,85 +180,89 @@
     <div x-show="currentView === 'app'" class="min-h-full flex flex-col pb-20 md:pb-0">
         
         <!-- TOP NAVBAR -->
-        <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40">
+        <header class="border-b sticky top-0 z-40 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'">
             <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 flex justify-between items-center">
                 
                 <!-- BRANDING LOGO -->
                 <div class="flex items-center space-x-2 cursor-pointer" @click="activeTab = 'beranda'">
-                    <div class="w-9 h-9 rounded-xl bg-cyan-500 flex items-center justify-center font-bold text-dark-900 text-lg">G</div>
-                    <span class="text-lg font-bold tracking-wide text-white">Giga<span class="text-cyan-400">Job</span></span>
+                    <div class="w-9 h-9 rounded-xl bg-cyan-500 flex items-center justify-center font-bold text-slate-950 text-lg">G</div>
+                    <span class="text-lg font-bold tracking-wide" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Giga<span class="text-cyan-500">Job</span></span>
                 </div>
 
                 <!-- NAVIGASI DESKTOP -->
                 <nav class="hidden md:flex space-x-1">
-                    <button @click="activeTab = 'beranda'" :class="activeTab === 'beranda' ? 'text-cyan-400 bg-slate-700/50' : 'text-slate-300 hover:text-white'" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
+                    <button @click="activeTab = 'beranda'" :class="activeTab === 'beranda' ? 'text-cyan-500 ' + (isDarkMode ? 'bg-slate-700/50' : 'bg-slate-100') : (isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900')" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
                         <i data-lucide="home" class="w-4 h-4"></i><span>Beranda</span>
                     </button>
-                    <button @click="activeTab = 'job'" :class="activeTab === 'job' ? 'text-cyan-400 bg-slate-700/50' : 'text-slate-300 hover:text-white'" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
+                    <button @click="activeTab = 'job'" :class="activeTab === 'job' ? 'text-cyan-500 ' + (isDarkMode ? 'bg-slate-700/50' : 'bg-slate-100') : (isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900')" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
                         <i data-lucide="briefcase" class="w-4 h-4"></i><span>Job</span>
                     </button>
-                    <button @click="activeTab = 'tugas'" :class="activeTab === 'tugas' ? 'text-cyan-400 bg-slate-700/50' : 'text-slate-300 hover:text-white'" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
+                    <button @click="activeTab = 'tugas'" :class="activeTab === 'tugas' ? 'text-cyan-500 ' + (isDarkMode ? 'bg-slate-700/50' : 'bg-slate-100') : (isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900')" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
                         <i data-lucide="check-square" class="w-4 h-4"></i><span>Tugas</span>
                     </button>
-                    <button @click="activeTab = 'riwayat'" :class="activeTab === 'riwayat' ? 'text-cyan-400 bg-slate-700/50' : 'text-slate-300 hover:text-white'" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
+                    <button @click="activeTab = 'riwayat'" :class="activeTab === 'riwayat' ? 'text-cyan-500 ' + (isDarkMode ? 'bg-slate-700/50' : 'bg-slate-100') : (isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900')" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
                         <i data-lucide="clock" class="w-4 h-4"></i><span>Riwayat</span>
                     </button>
-                    <button @click="activeTab = 'forum'" :class="activeTab === 'forum' ? 'text-cyan-400 bg-slate-700/50' : 'text-slate-300 hover:text-white'" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
+                    <button @click="activeTab = 'forum'" :class="activeTab === 'forum' ? 'text-cyan-500 ' + (isDarkMode ? 'bg-slate-700/50' : 'bg-slate-100') : (isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900')" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
                         <i data-lucide="message-square" class="w-4 h-4"></i><span>Forum</span>
                     </button>
-                    <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-cyan-400 bg-slate-700/50' : 'text-slate-300 hover:text-white'" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
+                    <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-cyan-500 ' + (isDarkMode ? 'bg-slate-700/50' : 'bg-slate-100') : (isDarkMode ? 'text-slate-300 hover:text-white' : 'text-slate-600 hover:text-slate-900')" class="px-3 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-1.5">
                         <i data-lucide="user" class="w-4 h-4"></i><span>Profil</span>
                     </button>
                 </nav>
 
-                <!-- POJOK KANAN (SALDO & ADMIN) -->
+                <!-- POJOK KANAN (TEMA, SALDO & ADMIN) -->
                 <div class="flex items-center space-x-3">
-                    <div @click="activeTab = 'saldo'" class="cursor-pointer bg-slate-900 hover:bg-slate-950 border border-cyan-500/30 px-3 py-1.5 rounded-xl flex items-center space-x-2 transition group">
-                        <div class="w-6 h-6 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-dark-900 transition">
+                    <button @click="toggleTheme" class="p-2 rounded-xl border text-sm transition" :class="isDarkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-700 hover:bg-slate-100'">
+                        <i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-4 h-4"></i>
+                    </button>
+
+                    <div @click="activeTab = 'saldo'" class="cursor-pointer border px-3 py-1.5 rounded-xl flex items-center space-x-2 transition group" :class="isDarkMode ? 'bg-slate-900 border-cyan-500/30 hover:bg-slate-950' : 'bg-slate-50 border-cyan-500/40 hover:bg-slate-100'">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-500 group-hover:bg-cyan-500 group-hover:text-slate-950 transition">
                             <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
                         </div>
                         <div class="text-right">
-                            <div class="text-[9px] text-slate-400 leading-none">Saldo</div>
-                            <div class="text-xs font-bold text-cyan-400 group-hover:underline" x-text="formatIDR(currentUser.saldo)"></div>
+                            <div class="text-[9px] leading-none" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Saldo</div>
+                            <div class="text-xs font-bold text-cyan-500 group-hover:underline" x-text="formatIDR(currentUser.saldo)"></div>
                         </div>
                     </div>
 
-                    <button x-show="currentUser.role === 'admin'" @click="currentView = 'admin'" class="hidden md:block bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs px-2.5 py-1.5 rounded-lg font-semibold hover:bg-amber-500/30 transition">Admin</button>
+                    <button x-show="currentUser.role === 'admin'" @click="currentView = 'admin'" class="hidden md:block bg-amber-500/20 border border-amber-500/40 text-amber-500 text-xs px-2.5 py-1.5 rounded-lg font-semibold hover:bg-amber-500/30 transition">Admin</button>
                 </div>
             </div>
         </header>
 
-        <!-- FLOATING CHAT BUTTON (DI ATAS POJOK KANAN NAVIGASI PROFIL) -->
+        <!-- FLOATING CHAT BUTTON -->
         <div class="fixed bottom-20 right-5 z-50 md:hidden">
             <button @click="activeTab = 'forum'" class="relative w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-2xl transition transform active:scale-95">
                 <i data-lucide="message-square" class="w-6 h-6"></i>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-slate-900">3</span>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2" :class="isDarkMode ? 'border-slate-900' : 'border-white'">3</span>
             </button>
         </div>
 
         <!-- BOTTOM NAVIGATION BAR MOBILE -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around items-center h-16 z-40 md:hidden">
-            <button @click="activeTab = 'beranda'" :class="activeTab === 'beranda' ? 'text-cyan-400' : 'text-slate-400'" class="flex flex-col items-center justify-center flex-1 h-full">
+        <nav class="fixed bottom-0 left-0 right-0 border-t flex justify-around items-center h-16 z-40 md:hidden transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-400' : 'bg-white border-slate-200 text-slate-500'">
+            <button @click="activeTab = 'beranda'" :class="activeTab === 'beranda' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
                 <i data-lucide="home" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1">Beranda</span>
             </button>
-            <button @click="activeTab = 'job'" :class="activeTab === 'job' ? 'text-cyan-400' : 'text-slate-400'" class="flex flex-col items-center justify-center flex-1 h-full">
+            <button @click="activeTab = 'job'" :class="activeTab === 'job' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
                 <i data-lucide="briefcase" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1">Job</span>
             </button>
-            <button @click="activeTab = 'tugas'" :class="activeTab === 'tugas' ? 'text-cyan-400' : 'text-slate-400'" class="flex flex-col items-center justify-center flex-1 h-full">
+            <button @click="activeTab = 'tugas'" :class="activeTab === 'tugas' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
                 <i data-lucide="check-square" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1">Tugas</span>
             </button>
-            <button @click="activeTab = 'riwayat'" :class="activeTab === 'riwayat' ? 'text-cyan-400' : 'text-slate-400'" class="flex flex-col items-center justify-center flex-1 h-full">
+            <button @click="activeTab = 'riwayat'" :class="activeTab === 'riwayat' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
                 <i data-lucide="clock" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1">Riwayat</span>
             </button>
-            <button @click="activeTab = 'saldo'" :class="activeTab === 'saldo' ? 'text-cyan-400' : 'text-slate-400'" class="flex flex-col items-center justify-center flex-1 h-full">
+            <button @click="activeTab = 'saldo'" :class="activeTab === 'saldo' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
                 <i data-lucide="wallet" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1">Saldo</span>
             </button>
-            <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-cyan-400' : 'text-slate-400'" class="flex flex-col items-center justify-center flex-1 h-full">
+            <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
                 <i data-lucide="user" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1">Profil</span>
             </button>
@@ -229,9 +274,9 @@
             <!-- HALAMAN BERANDA -->
             <div x-show="activeTab === 'beranda'" class="space-y-6">
                 <div>
-                    <div class="text-[11px] font-semibold text-slate-400 tracking-wider uppercase">BERANDA</div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white mt-0.5">Halo, selamat datang</h2>
-                    <p class="text-xs text-slate-400 mt-1">Pantau saldo dan kirim email untuk menambah penghasilanmu.</p>
+                    <div class="text-[11px] font-semibold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">BERANDA</div>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Halo, selamat datang</h2>
+                    <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Pantau saldo dan kirim email untuk menambah penghasilanmu.</p>
                 </div>
 
                 <div class="bg-gradient-to-r from-blue-600 via-cyan-600 to-indigo-600 p-6 rounded-3xl shadow-xl text-white relative overflow-hidden space-y-4">
@@ -258,53 +303,53 @@
                 </div>
 
                 <div class="grid grid-cols-3 gap-3">
-                    <div class="bg-slate-800 border border-slate-700/65 p-4 rounded-3xl text-center">
-                        <div class="text-lg font-bold text-amber-400" x-text="currentUser.riwayat.filter(r => r.status === 'Menunggu Verifikasi').length">0</div>
-                        <div class="text-xs text-slate-400 mt-0.5">Pending</div>
+                    <div class="border p-4 rounded-3xl text-center transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/65' : 'bg-white border-slate-200 shadow-sm'">
+                        <div class="text-lg font-bold text-amber-500" x-text="currentUser.riwayat.filter(r => r.status === 'Menunggu Verifikasi').length">0</div>
+                        <div class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Pending</div>
                     </div>
-                    <div class="bg-slate-800 border border-slate-700/65 p-4 rounded-3xl text-center">
-                        <div class="text-lg font-bold text-emerald-400" x-text="currentUser.riwayat.filter(r => r.status === 'Berhasil' && !r.tipe.toLowerCase().includes('penarikan')).length">0</div>
-                        <div class="text-xs text-slate-400 mt-0.5">Diterima</div>
+                    <div class="border p-4 rounded-3xl text-center transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/65' : 'bg-white border-slate-200 shadow-sm'">
+                        <div class="text-lg font-bold text-emerald-500" x-text="currentUser.riwayat.filter(r => r.status === 'Berhasil' && !r.tipe.toLowerCase().includes('penarikan')).length">0</div>
+                        <div class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Diterima</div>
                     </div>
-                    <div class="bg-slate-800 border border-slate-700/65 p-4 rounded-3xl text-center">
-                        <div class="text-sm md:text-lg font-bold text-cyan-400 truncate" x-text="formatIDR(currentUser.saldo)"></div>
-                        <div class="text-xs text-slate-400 mt-0.5">Saldo</div>
+                    <div class="border p-4 rounded-3xl text-center transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/65' : 'bg-white border-slate-200 shadow-sm'">
+                        <div class="text-sm md:text-lg font-bold text-cyan-500 truncate" x-text="formatIDR(currentUser.saldo)"></div>
+                        <div class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Saldo</div>
                     </div>
                 </div>
 
-                <div class="bg-slate-800 border border-slate-700/65 p-6 rounded-3xl space-y-4">
-                    <div class="flex items-center space-x-2 text-cyan-400">
+                <div class="border p-6 rounded-3xl space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/65' : 'bg-white border-slate-200 shadow-sm'">
+                    <div class="flex items-center space-x-2 text-cyan-500">
                         <div class="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center">
                             <i data-lucide="zap" class="w-4 h-4"></i>
                         </div>
-                        <h3 class="text-base font-bold text-white">Generate Email</h3>
+                        <h3 class="text-base font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Generate Email</h3>
                     </div>
 
                     <div class="space-y-3">
-                        <label class="block text-xs font-medium text-slate-300">Jumlah (10-50)</label>
+                        <label class="block text-xs font-medium" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Jumlah (10-50)</label>
                         <div class="flex space-x-2">
-                            <input type="number" min="10" max="50" x-model.number="generateCount" class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500">
+                            <input type="number" min="10" max="50" x-model.number="generateCount" class="w-full border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                             <button @click="handleGenerateEmail" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-2xl text-xs transition shadow-md whitespace-nowrap">Generate</button>
                         </div>
-                        <p class="text-[11px] text-slate-400 leading-relaxed pt-1">
-                            Generate ini hanya alat bantu. Jangan langsung setor — daftarkan dulu di aplikasi Gmail dengan password wajib <span class="text-cyan-400 font-semibold">fineirga</span>, setelah terdaftar dengan password itu baru setorkan ke web.
+                        <p class="text-[11px] leading-relaxed pt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">
+                            Generate ini hanya alat bantu. Jangan langsung setor — daftarkan dulu di aplikasi Gmail dengan password wajib <span class="text-cyan-500 font-semibold">fineirga</span>, setelah terdaftar dengan password itu baru setorkan ke web.
                         </p>
                     </div>
 
                     <template x-if="generatedEmails.length > 0">
-                        <div class="mt-4 pt-4 border-t border-slate-700/60 space-y-3">
+                        <div class="mt-4 pt-4 border-t space-y-3" :class="isDarkMode ? 'border-slate-700/60' : 'border-slate-200'">
                             <div class="flex justify-between items-center">
-                                <h4 class="text-xs font-bold text-white uppercase tracking-wider">Hasil Generate Alamat Gmail (Unik):</h4>
-                                <button @click="copyAllEmails" class="text-[11px] text-cyan-400 hover:underline flex items-center space-x-1">
+                                <h4 class="text-xs font-bold uppercase tracking-wider" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Hasil Generate Alamat Gmail (Unik):</h4>
+                                <button @click="copyAllEmails" class="text-[11px] text-cyan-500 hover:underline flex items-center space-x-1">
                                     <i data-lucide="copy" class="w-3 h-3"></i>
                                     <span>Salin Semua</span>
                                 </button>
                             </div>
-                            <div class="bg-slate-900 border border-slate-700/60 rounded-2xl p-3 max-h-48 overflow-y-auto space-y-2">
+                            <div class="border rounded-2xl p-3 max-h-48 overflow-y-auto space-y-2 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900 border-slate-700/60' : 'bg-slate-50 border-slate-200'">
                                 <template x-for="(email, index) in generatedEmails" :key="index">
-                                    <div class="flex justify-between items-center bg-slate-800/60 px-3 py-2 rounded-xl text-xs">
-                                        <span class="text-cyan-300 font-mono" x-text="email"></span>
-                                        <button @click="copySingleEmail(email)" class="text-slate-400 hover:text-cyan-400 transition" title="Salin Email">
+                                    <div class="flex justify-between items-center px-3 py-2 rounded-xl text-xs transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800/60 text-cyan-300' : 'bg-white text-cyan-700 border border-slate-200'">
+                                        <span class="font-mono" x-text="email"></span>
+                                        <button @click="copySingleEmail(email)" class="text-slate-400 hover:text-cyan-500 transition" title="Salin Email">
                                             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                                         </button>
                                     </div>
@@ -316,88 +361,88 @@
             </div>
 
             <!-- HALAMAN JOB -->
-            <div x-show="activeTab === 'job'" class="space-y-6 text-slate-900 bg-slate-100 -m-4 md:-m-6 p-4 md:p-6 min-h-screen rounded-3xl">
+            <div x-show="activeTab === 'job'" class="space-y-6">
                 <div>
-                    <div class="text-[11px] font-bold text-slate-500 tracking-wider uppercase">JOB</div>
-                    <h2 class="text-2xl font-extrabold text-slate-900 mt-0.5 tracking-tight">Kirim email</h2>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pilih jenis job. Reward masuk otomatis setelah email disetujui admin.</p>
+                    <div class="text-[11px] font-bold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">JOB</div>
+                    <h2 class="text-2xl font-extrabold tracking-tight mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Kirim email</h2>
+                    <p class="text-xs mt-1 leading-relaxed" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Pilih jenis job. Reward masuk otomatis setelah email disetujui admin.</p>
                 </div>
 
-                <div class="bg-white border border-slate-200/80 p-4 rounded-3xl shadow-sm flex items-center space-x-4">
-                    <div class="w-11 h-11 rounded-2xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center shrink-0">
+                <div class="border p-4 rounded-3xl shadow-sm flex items-center space-x-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                    <div class="w-11 h-11 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center shrink-0">
                         <i data-lucide="clock" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-slate-900">Estimasi ACC 1–2 Hari</h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Akun diproses setelah disetujui admin.</p>
+                        <h3 class="text-sm font-bold">Estimasi ACC 1–2 Hari</h3>
+                        <p class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Akun diproses setelah disetujui admin.</p>
                     </div>
                 </div>
 
-                <div class="bg-amber-50/70 border border-amber-200/80 p-5 rounded-3xl space-y-3">
+                <div class="border p-5 rounded-3xl space-y-3 transition-colors duration-300" :class="isDarkMode ? 'bg-amber-950/20 border-amber-500/30 text-amber-200' : 'bg-amber-50/70 border-amber-200/80 text-amber-900'">
                     <div class="flex items-start space-x-3">
-                        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
-                        <p class="text-xs text-amber-900 leading-relaxed">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i>
+                        <p class="text-xs leading-relaxed">
                             Email wajib sudah terdaftar, umur akun minimal 18 tahun, tanpa nomor telepon/terkait nomor telepon, tanpa email pemulihan.
                         </p>
                     </div>
-                    <p class="text-xs text-amber-900 font-medium leading-relaxed pl-8">
-                        Wajib: daftarkan akun Gmail menggunakan password <span class="bg-amber-200/70 px-1.5 py-0.5 rounded font-mono font-bold text-amber-950">lele1122</span> untuk semua akun yang dikirim.
+                    <p class="text-xs font-medium leading-relaxed pl-8">
+                        Wajib: daftarkan akun Gmail menggunakan password <span class="px-1.5 py-0.5 rounded font-mono font-bold" :class="isDarkMode ? 'bg-amber-900/50 text-amber-300' : 'bg-amber-200/70 text-amber-950'">lele1122</span> untuk semua akun yang dikirim.
                     </p>
                 </div>
 
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm space-y-4">
+                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-base font-bold text-slate-900">Email Khusus</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Wajib sesuai hasil generate, satu per baris</p>
+                            <h3 class="text-base font-bold">Email Khusus</h3>
+                            <p class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Wajib sesuai hasil generate, satu per baris</p>
                         </div>
-                        <span class="bg-cyan-50 text-cyan-700 border border-cyan-200/60 text-xs font-bold px-3 py-1 rounded-full">Reward Rp1.500</span>
+                        <span class="bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 text-xs font-bold px-3 py-1 rounded-full">Reward Rp1.500</span>
                     </div>
 
                     <div class="space-y-3 pt-2">
-                        <label class="block text-xs font-medium text-slate-700">Masukkan daftar email (satu per baris)</label>
-                        <textarea rows="3" x-model="jobForm.emailKhusus" placeholder="contoh: ryan08301000abcde@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 focus:outline-none focus:border-cyan-500 font-mono"></textarea>
-                        <button @click="submitJobGmail('Email Khusus', 1500)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">Setor Email Khusus</button>
+                        <label class="block text-xs font-medium" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Masukkan daftar email (satu per baris)</label>
+                        <textarea rows="3" x-model="jobForm.emailKhusus" placeholder="contoh: ryan08301000abcde@gmail.com" class="w-full border rounded-2xl p-3 text-xs focus:outline-none focus:border-cyan-500 font-mono transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'"></textarea>
+                        <button @click="submitJobGmail('Email Khusus', 1500)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-sm">Setor Email Khusus</button>
                     </div>
                 </div>
 
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm space-y-4">
+                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-base font-bold text-slate-900">Email Bebas</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Email bebas (selain format khusus), satu per baris</p>
+                            <h3 class="text-base font-bold">Email Bebas</h3>
+                            <p class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Email bebas (selain format khusus), satu per baris</p>
                         </div>
-                        <span class="bg-cyan-50 text-cyan-700 border border-cyan-200/60 text-xs font-bold px-3 py-1 rounded-full">Reward Rp750</span>
+                        <span class="bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 text-xs font-bold px-3 py-1 rounded-full">Reward Rp750</span>
                     </div>
 
                     <div class="space-y-3 pt-2">
-                        <label class="block text-xs font-medium text-slate-700">Masukkan daftar email (satu per baris)</label>
-                        <textarea rows="3" x-model="jobForm.emailBebas" placeholder="contoh: emailbebasanda@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 focus:outline-none focus:border-cyan-500 font-mono"></textarea>
-                        <button @click="submitJobGmail('Email Bebas', 750)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">Setor Email Bebas</button>
+                        <label class="block text-xs font-medium" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Masukkan daftar email (satu per baris)</label>
+                        <textarea rows="3" x-model="jobForm.emailBebas" placeholder="contoh: emailbebasanda@gmail.com" class="w-full border rounded-2xl p-3 text-xs focus:outline-none focus:border-cyan-500 font-mono transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'"></textarea>
+                        <button @click="submitJobGmail('Email Bebas', 750)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-sm">Setor Email Bebas</button>
                     </div>
                 </div>
             </div>
 
-            <!-- HALAMAN TUGAS (DISESUAIKAN DENGAN GAMBAR REFERENSI ANDA) -->
-            <div x-show="activeTab === 'tugas'" class="space-y-6 text-slate-900 bg-slate-100 -m-4 md:-m-6 p-4 md:p-6 min-h-screen rounded-3xl">
+            <!-- HALAMAN TUGAS -->
+            <div x-show="activeTab === 'tugas'" class="space-y-6">
                 <div>
-                    <div class="text-[11px] font-bold text-slate-500 tracking-wider uppercase">TUGAS</div>
-                    <h2 class="text-2xl font-extrabold text-slate-900 mt-0.5 tracking-tight">Kerjakan tugas</h2>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Selesaikan tugas, upload bukti, lalu tunggu persetujuan admin untuk dapat reward.</p>
+                    <div class="text-[11px] font-bold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">TUGAS</div>
+                    <h2 class="text-2xl font-extrabold tracking-tight mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Kerjakan tugas</h2>
+                    <p class="text-xs mt-1 leading-relaxed" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Selesaikan tugas, upload bukti, lalu tunggu persetujuan admin untuk dapat reward.</p>
                 </div>
 
                 <!-- Kartu Tugas Tersedia -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900">Tugas Tersedia</h3>
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-2xl py-8 text-center text-slate-400 text-xs">
+                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                    <h3 class="text-base font-bold">Tugas Tersedia</h3>
+                    <div class="border rounded-2xl py-8 text-center text-xs transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900/50 border-slate-700 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'">
                         Belum ada tugas tersedia.
                     </div>
                 </div>
 
                 <!-- Kartu Pengerjaanku -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-3xl shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900">Pengerjaanku</h3>
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-2xl py-8 text-center text-slate-400 text-xs">
+                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                    <h3 class="text-base font-bold">Pengerjaanku</h3>
+                    <div class="border rounded-2xl py-8 text-center text-xs transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900/50 border-slate-700 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'">
                         Belum ada pengerjaan.
                     </div>
                 </div>
@@ -405,20 +450,18 @@
 
             <!-- HALAMAN FORUM CHAT -->
             <div x-show="activeTab === 'forum'" class="space-y-4">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h2 class="text-xl md:text-2xl font-bold text-white">Forum Chat Komunitas</h2>
-                        <p class="text-xs text-slate-400 mt-1">Diskusi dan tanya jawab dengan sesama pekerja GigaJob.</p>
-                    </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Forum Chat Komunitas</h2>
+                    <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Diskusi dan tanya jawab dengan sesama pekerja GigaJob.</p>
                 </div>
 
-                <div class="bg-slate-800 border border-slate-700/60 rounded-2xl flex flex-col h-[520px]">
-                    <div class="p-4 border-b border-slate-700/60 flex items-center justify-between bg-slate-800/80 rounded-t-2xl">
+                <div class="border rounded-2xl flex flex-col h-[520px] transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60' : 'bg-white border-slate-200 shadow-sm'">
+                    <div class="p-4 border-b flex items-center justify-between rounded-t-2xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800/80 border-slate-700/60' : 'bg-slate-50 border-slate-200'">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-sm">#</div>
+                            <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-500 flex items-center justify-center font-bold text-sm">#</div>
                             <div>
-                                <h4 class="font-bold text-sm text-white">Diskusi Umum Pekerja</h4>
-                                <p class="text-[10px] text-slate-400">GigaJob Public Forum</p>
+                                <h4 class="font-bold text-sm" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Diskusi Umum Pekerja</h4>
+                                <p class="text-[10px]" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">GigaJob Public Forum</p>
                             </div>
                         </div>
                     </div>
@@ -427,21 +470,21 @@
                         <template x-for="chat in forumMessages" :key="chat.id">
                             <div class="flex flex-col" :class="chat.isMe ? 'items-end' : 'items-start'">
                                 <div class="flex items-center space-x-2 mb-1">
-                                    <span class="text-[11px] font-semibold" :class="chat.isMe ? 'text-cyan-400' : 'text-slate-300'" x-text="chat.sender"></span>
-                                    <span class="text-[9px] text-slate-500" x-text="chat.time"></span>
+                                    <span class="text-[11px] font-semibold" :class="chat.isMe ? 'text-cyan-500' : (isDarkMode ? 'text-slate-300' : 'text-slate-700')" x-text="chat.sender"></span>
+                                    <span class="text-[9px]" :class="isDarkMode ? 'text-slate-500' : 'text-slate-400'" x-text="chat.time"></span>
                                 </div>
                                 <div class="max-w-xs md:max-w-md px-4 py-2.5 rounded-2xl text-xs"
-                                     :class="chat.isMe ? 'bg-cyan-500 text-dark-900 rounded-tr-none font-medium' : 'bg-slate-900 text-slate-200 rounded-tl-none border border-slate-700/60'">
+                                     :class="chat.isMe ? 'bg-cyan-500 text-slate-950 rounded-tr-none font-medium shadow' : (isDarkMode ? 'bg-slate-900 text-slate-200 rounded-tl-none border border-slate-700/60' : 'bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200')">
                                     <span x-text="chat.text"></span>
                                 </div>
                             </div>
                         </template>
                     </div>
 
-                    <div class="p-3 border-t border-slate-700/60 bg-slate-900/50 rounded-b-2xl">
+                    <div class="p-3 border-t rounded-b-2xl transition-colors duration-300" :class="isDarkMode ? 'border-slate-700/60 bg-slate-900/50' : 'border-slate-200 bg-slate-50'">
                         <form @submit.prevent="sendChatMessage" class="flex space-x-2">
-                            <input type="text" x-model="newChatMessage" placeholder="Tulis pesan diskusi..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500">
-                            <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-dark-900 font-bold px-4 py-2.5 rounded-xl text-xs transition flex items-center space-x-1">
+                            <input type="text" x-model="newChatMessage" placeholder="Tulis pesan diskusi..." class="flex-1 border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'">
+                            <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs transition flex items-center space-x-1 shadow">
                                 <span>Kirim</span>
                                 <i data-lucide="send" class="w-3.5 h-3.5"></i>
                             </button>
@@ -453,27 +496,27 @@
             <!-- HALAMAN RIWAYAT -->
             <div x-show="activeTab === 'riwayat'" class="space-y-6">
                 <div>
-                    <div class="text-[11px] font-semibold text-slate-400 tracking-wider uppercase">RIWAYAT</div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white mt-0.5">Aktivitas saldo</h2>
-                    <p class="text-xs text-slate-400 mt-1">Semua job, tugas, dan penarikan kamu tercatat di sini.</p>
+                    <div class="text-[11px] font-semibold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">RIWAYAT</div>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Aktivitas saldo</h2>
+                    <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Semua job, tugas, dan penarikan kamu tercatat di sini.</p>
                 </div>
 
                 <div class="space-y-3">
                     <template x-for="item in currentUser.riwayat" :key="item.id">
-                        <div class="bg-slate-800 border border-slate-700/60 p-4 rounded-3xl flex items-center justify-between transition hover:border-slate-600">
+                        <div class="border p-4 rounded-3xl flex items-center justify-between transition hover:border-slate-500 duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60 text-white' : 'bg-white border-slate-200 shadow-sm'">
                             <div class="flex items-center space-x-3.5">
                                 <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                                     :class="item.jumlah.startsWith('-') ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400'">
+                                     :class="item.jumlah.startsWith('-') ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-500'">
                                     <i :data-lucide="item.jumlah.startsWith('-') ? 'arrow-down' : 'arrow-up'" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <h4 class="text-sm font-bold text-white" x-text="item.tipe"></h4>
-                                    <p class="text-[11px] text-slate-400 mt-0.5" x-text="`${item.keterangan} • ${item.tanggal}`"></p>
+                                    <h4 class="text-sm font-bold" x-text="item.tipe"></h4>
+                                    <p class="text-[11px] mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'" x-text="`${item.keterangan} • ${item.tanggal}`"></p>
                                 </div>
                             </div>
                             <div class="text-right">
                                 <div class="text-sm font-extrabold"
-                                     :class="item.jumlah.startsWith('-') ? 'text-red-400' : 'text-emerald-400'"
+                                     :class="item.jumlah.startsWith('-') ? 'text-red-500' : 'text-emerald-500'"
                                      x-text="item.jumlah"></div>
                             </div>
                         </div>
@@ -481,40 +524,40 @@
                 </div>
             </div>
 
-            <!-- HALAMAN SALDO & PENARIKAN (DANA ONLY) -->
+            <!-- HALAMAN SALDO & PENARIKAN -->
             <div x-show="activeTab === 'saldo'" class="space-y-6">
                 <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white">Dompet Saldo & Penarikan</h2>
-                    <p class="text-xs text-slate-400 mt-1">Kelola pendapatan dan ajukan pencairan komisi Anda ke akun DANA.</p>
+                    <h2 class="text-xl md:text-2xl font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Dompet Saldo & Penarikan</h2>
+                    <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Kelola pendapatan dan ajukan pencairan komisi Anda ke akun DANA.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="bg-slate-800 border border-cyan-500/40 p-5 rounded-2xl">
-                        <div class="text-xs text-slate-400 mb-1">Saldo Tersedia</div>
-                        <div class="text-2xl font-bold text-cyan-400" x-text="formatIDR(currentUser.saldo)"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border p-5 rounded-2xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-cyan-500/40 text-white' : 'bg-white border-cyan-500/30 shadow-sm'">
+                        <div class="text-xs mb-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Saldo Tersedia</div>
+                        <div class="text-2xl font-bold text-cyan-500" x-text="formatIDR(currentUser.saldo)"></div>
                     </div>
-                    <div class="bg-slate-800 border border-slate-700/60 p-5 rounded-2xl">
-                        <div class="text-xs text-slate-400 mb-1">Total Penghasilan</div>
-                        <div class="text-2xl font-bold text-white" x-text="formatIDR(currentUser.totalPenghasilan)"></div>
+                    <div class="border p-5 rounded-2xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60 text-white' : 'bg-white border-slate-200 shadow-sm'">
+                        <div class="text-xs mb-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Total Penghasilan</div>
+                        <div class="text-2xl font-bold" x-text="formatIDR(currentUser.totalPenghasilan)"></div>
                     </div>
                 </div>
 
-                <div class="bg-slate-800 border border-slate-700/60 p-6 rounded-2xl max-w-2xl">
-                    <h3 class="text-lg font-bold text-white mb-4">Formulir Penarikan Saldo (DANA)</h3>
+                <div class="border p-6 rounded-2xl max-w-2xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60 text-white' : 'bg-white border-slate-200 shadow-sm'">
+                    <h3 class="text-lg font-bold mb-4">Formulir Penarikan Saldo (DANA)</h3>
                     <form @submit.prevent="ajukanPenarikan" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Metode Pembayaran</label>
-                            <input type="text" readonly value="DANA (DANA Only)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-cyan-400 font-semibold focus:outline-none">
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Metode Pembayaran</label>
+                            <input type="text" readonly value="DANA (DANA Only)" class="w-full border rounded-xl px-4 py-2.5 text-sm text-cyan-500 font-semibold focus:outline-none transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-100 border-slate-300'">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Nomor Akun DANA / No. HP</label>
-                            <input type="text" x-model="withdrawForm.nomor" required placeholder="Contoh: 081234567890" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Nomor Akun DANA / No. HP</label>
+                            <input type="text" x-model="withdrawForm.nomor" required placeholder="Contoh: 081234567890" class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Jumlah Penarikan (Rp)</label>
-                            <input type="number" min="10000" x-model.number="withdrawForm.jumlah" required placeholder="Min. Rp10.000" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500">
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Jumlah Penarikan (Rp)</label>
+                            <input type="number" min="10000" x-model.number="withdrawForm.jumlah" required placeholder="Min. Rp10.000" class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                         </div>
-                        <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-dark-900 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-500/20">Ajukan Penarikan Sekarang</button>
+                        <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-500/25">Ajukan Penarikan Sekarang</button>
                     </form>
                 </div>
             </div>
@@ -522,9 +565,9 @@
             <!-- HALAMAN PROFIL -->
             <div x-show="activeTab === 'profil'" class="space-y-6">
                 <div>
-                    <div class="text-[11px] font-semibold text-slate-400 tracking-wider uppercase">Profil</div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white mt-0.5" x-text="currentUser.username"></h2>
-                    <p class="text-xs text-slate-400" x-text="currentUser.email"></p>
+                    <div class="text-[11px] font-semibold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Profil</div>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'" x-text="currentUser.username"></h2>
+                    <p class="text-xs" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'" x-text="currentUser.email"></p>
                 </div>
 
                 <div class="bg-gradient-to-br from-cyan-600 to-blue-700 p-6 rounded-3xl shadow-xl relative overflow-hidden text-white space-y-6">
@@ -543,32 +586,32 @@
                     </div>
                 </div>
 
-                <div class="bg-slate-800 border border-slate-700/60 p-6 rounded-3xl space-y-4">
-                    <div class="flex items-center space-x-2 text-cyan-400">
+                <div class="border p-6 rounded-3xl space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60 text-white' : 'bg-white border-slate-200 shadow-sm'">
+                    <div class="flex items-center space-x-2 text-cyan-500">
                         <div class="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center">
                             <i data-lucide="lock" class="w-4 h-4"></i>
                         </div>
-                        <h3 class="text-base font-bold text-white">Ganti Password</h3>
+                        <h3 class="text-base font-bold">Ganti Password</h3>
                     </div>
                     <form @submit.prevent="handleGantiPassword" class="space-y-3 pt-2">
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Password Lama</label>
-                            <input type="password" x-model="passwordForm.lama" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500">
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Password Lama</label>
+                            <input type="password" x-model="passwordForm.lama" required class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Password Baru</label>
-                            <input type="password" x-model="passwordForm.baru" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500">
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Password Baru</label>
+                            <input type="password" x-model="passwordForm.baru" required class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Konfirmasi Password Baru</label>
-                            <input type="password" x-model="passwordForm.konfirmasi" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-500">
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Konfirmasi Password Baru</label>
+                            <input type="password" x-model="passwordForm.konfirmasi" required class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
                         </div>
-                        <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-dark-900 font-bold py-2.5 rounded-xl text-xs transition shadow-md">Perbarui Password</button>
+                        <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md">Perbarui Password</button>
                     </form>
                 </div>
 
                 <div class="pt-2">
-                    <button @click="logout" class="w-full bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 py-3 rounded-2xl text-xs font-semibold transition flex items-center justify-center space-x-2">
+                    <button @click="logout" class="w-full bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20 py-3 rounded-2xl text-xs font-semibold transition flex items-center justify-center space-x-2">
                         <i data-lucide="log-out" class="w-4 h-4"></i>
                         <span>Keluar Akun</span>
                     </button>
@@ -579,23 +622,23 @@
     </div>
 
     <!-- ADMIN PANEL -->
-    <div x-show="currentView === 'admin'" class="min-h-full flex flex-col bg-slate-950">
-        <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+    <div x-show="currentView === 'admin'" class="min-h-full flex flex-col" :class="isDarkMode ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-900'">
+        <header class="border-b sticky top-0 z-40 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'">
             <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center font-bold text-dark-900">A</div>
-                    <span class="font-bold text-lg text-white">GigaJob <span class="text-amber-400 text-xs px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">Admin Panel</span></span>
+                    <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center font-bold text-slate-950">A</div>
+                    <span class="font-bold text-lg">GigaJob <span class="text-amber-500 text-xs px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">Admin Panel</span></span>
                 </div>
-                <button @click="currentView = 'app'; activeTab = 'beranda'" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-4 py-2 rounded-xl transition font-medium">Kembali ke User Mode</button>
+                <button @click="currentView = 'app'; activeTab = 'beranda'" class="text-xs px-4 py-2 rounded-xl transition font-medium border" :class="isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'">Kembali ke User Mode</button>
             </div>
         </header>
 
         <main class="max-w-7xl mx-auto px-4 md:px-6 py-6 flex-1 w-full space-y-6">
-            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
-                <h3 class="text-base font-bold text-white">Verifikasi Tugas / Setoran Job Masuk</h3>
+            <div class="border p-6 rounded-2xl space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+                <h3 class="text-base font-bold">Verifikasi Tugas / Setoran Job Masuk</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-800/60 text-slate-400 border-b border-slate-800">
+                        <thead class="border-b" :class="isDarkMode ? 'bg-slate-800/60 text-slate-400 border-slate-800' : 'bg-slate-50 text-slate-600 border-slate-200'">
                             <tr>
                                 <th class="p-3">Keterangan / Email</th>
                                 <th class="p-3">Jenis Job</th>
@@ -604,17 +647,17 @@
                                 <th class="p-3">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800">
+                        <tbody class="divide-y" :class="isDarkMode ? 'divide-slate-800' : 'divide-slate-200'">
                             <template x-for="item in currentUser.riwayat.filter(r => r.status === 'Menunggu Verifikasi')" :key="item.id">
                                 <tr>
-                                    <td class="p-3 font-semibold text-white font-mono" x-text="item.keterangan"></td>
-                                    <td class="p-3 text-slate-300" x-text="item.tipe"></td>
-                                    <td class="p-3 text-cyan-400 font-bold" x-text="item.jumlah"></td>
+                                    <td class="p-3 font-semibold font-mono" x-text="item.keterangan"></td>
+                                    <td class="p-3" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'" x-text="item.tipe"></td>
+                                    <td class="p-3 text-cyan-500 font-bold" x-text="item.jumlah"></td>
                                     <td class="p-3">
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400" x-text="item.status"></span>
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-500" x-text="item.status"></span>
                                     </td>
                                     <td class="p-3 space-x-2">
-                                        <button @click="setujuiJobAdmin(item.id)" class="bg-emerald-500 hover:bg-emerald-600 text-dark-900 font-bold px-3 py-1 rounded-lg text-[10px]">Setujui & Tambah Saldo</button>
+                                        <button @click="setujuiJobAdmin(item.id)" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3 py-1 rounded-lg text-[10px]">Setujui & Tambah Saldo</button>
                                     </td>
                                 </tr>
                             </template>
@@ -631,9 +674,11 @@
             return {
                 currentView: 'landing',
                 activeTab: 'beranda',
+                isDarkMode: true,
                 toasts: [],
                 generateCount: 10,
                 generatedEmails: [],
+                forgotEmail: '',
                 
                 loginForm: { identifier: '', password: '' },
                 regForm: { name: '', username: '', email: '', password: '', confirmPassword: '' },
@@ -664,10 +709,15 @@
                     setTimeout(() => { lucide.createIcons(); }, 100);
                 },
 
+                toggleTheme() {
+                    this.isDarkMode = !this.isDarkMode;
+                    setTimeout(() => { lucide.createIcons(); }, 50);
+                },
+
                 showToast(message, type = 'success') {
                     const id = Date.now();
                     this.toasts.push({ id, message, type });
-                    setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 3000);
+                    setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 3500);
                     setTimeout(() => { lucide.createIcons(); }, 50);
                 },
 
@@ -679,6 +729,24 @@
                     this.showToast('Login berhasil!', 'success');
                     this.currentView = 'app';
                     setTimeout(() => { lucide.createIcons(); }, 50);
+                },
+
+                handleForgotSend() {
+                    if(!this.forgotEmail.trim()) {
+                        this.showToast('Masukkan alamat email dengan benar!', 'error');
+                        return;
+                    }
+                    // Validasi simulasi pencocokan email
+                    if(this.forgotEmail.trim().toLowerCase() !== this.currentUser.email.toLowerCase()) {
+                        this.showToast('Alamat email tidak terdaftar di sistem!', 'error');
+                        return;
+                    }
+
+                    this.showToast(`Link/kode ganti sandi berhasil dikirim ke email: ${this.forgotEmail}`, 'success');
+                    this.forgotEmail = '';
+                    setTimeout(() => {
+                        this.currentView = 'login';
+                    }, 2000);
                 },
 
                 handleRegister() {
