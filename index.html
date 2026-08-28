@@ -263,7 +263,6 @@
                         </div>
                     </div>
 
-                    <button x-show="currentUser.role === 'admin'" @click="currentView = 'admin'" class="hidden md:block bg-amber-500/20 border border-amber-500/40 text-amber-500 text-xs px-2.5 py-1.5 rounded-lg font-semibold hover:bg-amber-500/30 transition">Admin</button>
                 </div>
             </div>
         </header>
@@ -298,9 +297,13 @@
                 <i data-lucide="wallet" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1">Saldo</span>
             </button>
-            <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
+            <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full min-w-0">
                 <i data-lucide="user" class="w-5 h-5"></i>
                 <span class="text-[10px] mt-1">Profil</span>
+            </button>
+            <button x-show="currentUser.role === 'admin'" @click="currentView = 'admin'; activeAdminSection = ''; loadAdminRequests()" :class="currentView === 'admin' ? 'text-amber-500 font-bold' : 'text-amber-500/80'" class="flex flex-col items-center justify-center flex-1 h-full min-w-0">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-1">Admin</span>
             </button>
         </nav>
 
@@ -426,7 +429,7 @@
                     </p>
                 </div>
 
-                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                <div x-show="jobSettings.email_khusus_open" class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="text-base font-bold">Email Khusus</h3>
@@ -442,7 +445,7 @@
                     </div>
                 </div>
 
-                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                <div x-show="jobSettings.email_bebas_open" class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="text-base font-bold">Email Bebas</h3>
@@ -456,6 +459,12 @@
                         <textarea rows="3" x-model="jobForm.emailBebas" placeholder="contoh: emailbebasanda@gmail.com" class="w-full border rounded-2xl p-3 text-xs focus:outline-none focus:border-cyan-500 font-mono transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'"></textarea>
                         <button @click="submitJobGmail('Email Bebas', 750)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-sm">Setor Email Bebas</button>
                     </div>
+                </div>
+
+                <div x-show="!jobSettings.email_khusus_open && !jobSettings.email_bebas_open" class="border p-6 rounded-3xl text-center" :class="isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'">
+                    <div class="text-3xl mb-2">🔒</div>
+                    <h3 class="font-bold">Job sedang ditutup</h3>
+                    <p class="text-xs mt-1 text-slate-400">Silakan cek kembali nanti.</p>
                 </div>
             </div>
 
@@ -679,24 +688,36 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <button @click="loadAdminRequests" class="text-xs px-3 py-2 rounded-xl border font-medium" :class="isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'">↻ Refresh</button>
-                    <button @click="currentView = 'app'; activeTab = 'beranda'" class="text-xs px-4 py-2 rounded-xl transition font-medium border" :class="isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'">Kembali ke User Mode</button>
+                    <button @click="currentView = 'app'; activeTab = 'beranda'; activeAdminSection = ''" class="text-xs px-4 py-2 rounded-xl transition font-medium border" :class="isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'">Kembali ke User Mode</button>
                 </div>
             </div>
         </header>
 
         <main class="max-w-7xl mx-auto px-4 md:px-6 py-6 flex-1 w-full space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="border p-5 rounded-2xl" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
-                    <div class="text-xs text-slate-400">Penarikan Menunggu</div>
-                    <div class="text-2xl font-bold text-amber-500 mt-1" x-text="adminWithdrawRequests.filter(x => x.status === 'Menunggu Verifikasi').length"></div>
-                </div>
-                <div class="border p-5 rounded-2xl" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
-                    <div class="text-xs text-slate-400">Setoran Gmail Menunggu</div>
-                    <div class="text-2xl font-bold text-cyan-500 mt-1" x-text="adminJobRequests.filter(x => x.status === 'Menunggu Verifikasi').length"></div>
-                </div>
+            <div x-show="!activeAdminSection" class="grid grid-cols-1 gap-4 max-w-2xl mx-auto">
+                <button @click="activeAdminSection = 'setoran'" class="w-full text-left border p-5 rounded-2xl transition hover:-translate-y-0.5" :class="isDarkMode ? 'bg-slate-900 border-slate-800 hover:border-cyan-500/50' : 'bg-white border-slate-200 shadow-sm hover:border-cyan-500'">
+                    <div class="text-lg font-bold">1. SETORAN GMAIL</div>
+                    <div class="text-xs text-slate-400 mt-1">Lihat dan setujui setoran Gmail pengguna.</div>
+                </button>
+                <button @click="activeAdminSection = 'penarikan'" class="w-full text-left border p-5 rounded-2xl transition hover:-translate-y-0.5" :class="isDarkMode ? 'bg-slate-900 border-slate-800 hover:border-amber-500/50' : 'bg-white border-slate-200 shadow-sm hover:border-amber-500'">
+                    <div class="text-lg font-bold">2. PENARIKAN SALDO</div>
+                    <div class="text-xs text-slate-400 mt-1">Lihat dan proses permintaan penarikan saldo.</div>
+                </button>
+                <button @click="activeAdminSection = 'pengguna'" class="w-full text-left border p-5 rounded-2xl transition hover:-translate-y-0.5" :class="isDarkMode ? 'bg-slate-900 border-slate-800 hover:border-emerald-500/50' : 'bg-white border-slate-200 shadow-sm hover:border-emerald-500'">
+                    <div class="text-lg font-bold">3. LIAT SEMUA PENGGUNA</div>
+                    <div class="text-xs text-slate-400 mt-1">Lihat seluruh akun pengguna YANNJOB.</div>
+                </button>
+                <button @click="activeAdminSection = 'pengaturan'" class="w-full text-left border p-5 rounded-2xl transition hover:-translate-y-0.5" :class="isDarkMode ? 'bg-slate-900 border-slate-800 hover:border-violet-500/50' : 'bg-white border-slate-200 shadow-sm hover:border-violet-500'">
+                    <div class="text-lg font-bold">4. PENGATURAN JOB</div>
+                    <div class="text-xs text-slate-400 mt-1">Atur job Email Khusus dan Email Bebas OPEN/CLOSED.</div>
+                </button>
             </div>
 
-            <div class="border p-6 rounded-2xl space-y-4" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+            <div x-show="activeAdminSection" class="flex justify-start">
+                <button @click="activeAdminSection = ''" class="text-xs px-4 py-2 rounded-xl border font-medium" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-slate-300' : 'bg-white border-slate-300 text-slate-700'">← Kembali ke Menu Admin</button>
+            </div>
+
+            <div x-show="activeAdminSection === 'penarikan'" class="border p-6 rounded-2xl space-y-4" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
                 <div class="flex justify-between items-center gap-3">
                     <div>
                         <h3 class="text-base font-bold">💸 Permintaan Penarikan Saldo</h3>
@@ -729,7 +750,7 @@
                 </div>
             </div>
 
-            <div class="border p-6 rounded-2xl space-y-4" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+            <div x-show="activeAdminSection === 'setoran'" class="border p-6 rounded-2xl space-y-4" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
                 <div>
                     <h3 class="text-base font-bold">📧 Setoran Gmail Masuk</h3>
                     <p class="text-xs text-slate-400 mt-1">Admin dapat melihat username pengguna dan Gmail yang disetorkan.</p>
@@ -757,6 +778,54 @@
                             <tr x-show="!adminJobRequests.length"><td colspan="7" class="p-6 text-center text-slate-400">Belum ada setoran Gmail.</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <div x-show="activeAdminSection === 'pengguna'" class="border p-6 rounded-2xl space-y-4" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+                <div>
+                    <h3 class="text-base font-bold">👥 Semua Pengguna</h3>
+                    <p class="text-xs text-slate-400 mt-1">Daftar akun pengguna yang tersimpan di YANNJOB.</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs min-w-[760px]">
+                        <thead class="border-b" :class="isDarkMode ? 'bg-slate-800/60 text-slate-400 border-slate-800' : 'bg-slate-50 text-slate-600 border-slate-200'"><tr>
+                            <th class="p-3">Username</th><th class="p-3">Nama</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">Saldo</th><th class="p-3">Penghasilan</th>
+                        </tr></thead>
+                        <tbody class="divide-y" :class="isDarkMode ? 'divide-slate-800' : 'divide-slate-200'">
+                            <template x-for="user in adminUsers" :key="user.id">
+                                <tr>
+                                    <td class="p-3 font-bold" x-text="user.username || '-' "></td>
+                                    <td class="p-3" x-text="user.name || '-' "></td>
+                                    <td class="p-3" x-text="user.email || '-' "></td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded-full text-[10px] font-semibold" :class="user.role === 'admin' ? 'bg-amber-500/10 text-amber-500' : 'bg-slate-500/10 text-slate-400'" x-text="user.role || 'user'"></span></td>
+                                    <td class="p-3 text-cyan-500 font-bold" x-text="formatIDR(user.saldo)"></td>
+                                    <td class="p-3" x-text="formatIDR(user.total_penghasilan)"></td>
+                                </tr>
+                            </template>
+                            <tr x-show="!adminUsers.length"><td colspan="6" class="p-6 text-center text-slate-400">Belum ada data pengguna.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div x-show="activeAdminSection === 'pengaturan'" class="border p-6 rounded-2xl space-y-4" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+                <div>
+                    <h3 class="text-base font-bold">⚙️ Pengaturan Job</h3>
+                    <p class="text-xs text-slate-400 mt-1">Admin dapat membuka atau menutup setiap jenis job untuk seluruh pengguna.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border rounded-2xl p-4" :class="isDarkMode ? 'border-slate-800 bg-slate-800/60' : 'border-slate-200 bg-slate-50'">
+                        <div class="flex items-center justify-between gap-3">
+                            <div><div class="font-bold text-sm">Email Khusus</div><div class="text-xs text-slate-400 mt-1">Reward Rp1.500</div></div>
+                            <button @click="toggleJobStatus('email_khusus')" class="px-4 py-2 rounded-xl text-xs font-bold transition" :class="jobSettings.email_khusus_open ? 'bg-emerald-500 text-slate-950' : 'bg-red-500/10 text-red-500 border border-red-500/30'" x-text="jobSettings.email_khusus_open ? 'OPEN' : 'CLOSED'"></button>
+                        </div>
+                    </div>
+                    <div class="border rounded-2xl p-4" :class="isDarkMode ? 'border-slate-800 bg-slate-800/60' : 'border-slate-200 bg-slate-50'">
+                        <div class="flex items-center justify-between gap-3">
+                            <div><div class="font-bold text-sm">Email Bebas</div><div class="text-xs text-slate-400 mt-1">Reward Rp750</div></div>
+                            <button @click="toggleJobStatus('email_bebas')" class="px-4 py-2 rounded-xl text-xs font-bold transition" :class="jobSettings.email_bebas_open ? 'bg-emerald-500 text-slate-950' : 'bg-red-500/10 text-red-500 border border-red-500/30'" x-text="jobSettings.email_bebas_open ? 'OPEN' : 'CLOSED'"></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -803,6 +872,7 @@
             return {
                 currentView: 'landing',
                 activeTab: 'beranda',
+                activeAdminSection: '',
                 isDarkMode: true,
                 toasts: [],
                 generateCount: 10,
@@ -816,7 +886,9 @@
                 passwordForm: { lama: '', baru: '', konfirmasi: '' },
                 adminWithdrawRequests: [],
                 adminJobRequests: [],
+                adminUsers: [],
                 adminLoading: false,
+                jobSettings: { email_khusus_open: true, email_bebas_open: true },
 
                 currentUser: {
                     name: 'Ryan',
@@ -857,6 +929,7 @@
                       totalPenghasilan: Number(profile?.total_penghasilan || 0),
                       riwayat: []
                     };
+                    await this.loadJobSettings();
                     await this.loadForumMessages();
                     this.subscribeForum();
                 },
@@ -1069,6 +1142,11 @@
                 },
 
                 async submitJobGmail(jenis, reward) {
+                    const settingKey = jenis === 'Email Khusus' ? 'email_khusus_open' : 'email_bebas_open';
+                    if (!this.jobSettings[settingKey]) {
+                        this.showToast('Job ini sedang ditutup oleh admin.', 'error');
+                        return;
+                    }
                     const inputVal = jenis === 'Email Khusus' ? this.jobForm.emailKhusus : this.jobForm.emailBebas;
                     if(!inputVal.trim()) {
                         this.showToast('Masukkan minimal 1 email terlebih dahulu!', 'error');
@@ -1169,18 +1247,56 @@
                     setTimeout(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }, 50);
                 },
 
+                async loadJobSettings() {
+                    if (!window.gigaSupabase) return;
+                    try {
+                        const { data, error } = await gigaSupabase.from('job_settings').select('job_key,is_open');
+                        if (error) { console.warn('Job settings load:', error); return; }
+                        const map = {};
+                        (data || []).forEach(x => map[x.job_key] = !!x.is_open);
+                        this.jobSettings = {
+                            email_khusus_open: map.email_khusus !== undefined ? map.email_khusus : true,
+                            email_bebas_open: map.email_bebas !== undefined ? map.email_bebas : true
+                        };
+                    } catch (e) { console.warn('Job settings:', e); }
+                },
+
+                async toggleJobStatus(jobKey) {
+                    if (this.currentUser.role !== 'admin' || !window.gigaSupabase) return;
+                    const field = jobKey === 'email_khusus' ? 'email_khusus_open' : 'email_bebas_open';
+                    const next = !this.jobSettings[field];
+                    const { error } = await gigaSupabase.from('job_settings').upsert({ job_key: jobKey, is_open: next, updated_by: this.currentUser.id, updated_at: new Date().toISOString() }, { onConflict: 'job_key' });
+                    if (error) { this.showToast('Gagal mengubah status job: ' + error.message, 'error'); return; }
+                    this.jobSettings[field] = next;
+                    this.showToast(`${jobKey === 'email_khusus' ? 'Email Khusus' : 'Email Bebas'} sekarang ${next ? 'OPEN' : 'CLOSED'}.`, 'success');
+                },
+
+                async loadAdminUsers() {
+                    if (this.currentUser.role !== 'admin' || !window.gigaSupabase) return;
+                    const { data, error } = await gigaSupabase.from('profiles').select('id,username,name,email,role,saldo,total_penghasilan').order('username', { ascending: true });
+                    if (error) { console.warn('Admin users load:', error); this.showToast('Daftar pengguna gagal dimuat. Jalankan SQL admin terbaru.', 'error'); return; }
+                    this.adminUsers = data || [];
+                },
+
                 async loadAdminRequests() {
                     if (this.currentUser.role !== 'admin' || !window.gigaSupabase) return;
                     this.adminLoading = true;
                     try {
-                        const [w, j] = await Promise.all([
+                        const [w, j, u, settings] = await Promise.all([
                             gigaSupabase.from('withdraw_requests').select('*').order('created_at', { ascending: false }),
-                            gigaSupabase.from('job_submissions').select('*').order('created_at', { ascending: false })
+                            gigaSupabase.from('job_submissions').select('*').order('created_at', { ascending: false }),
+                            gigaSupabase.from('profiles').select('id,username,name,email,role,saldo,total_penghasilan').order('username', { ascending: true }),
+                            gigaSupabase.from('job_settings').select('job_key,is_open')
                         ]);
                         if (w.error) console.warn('Admin withdraw load:', w.error);
                         if (j.error) console.warn('Admin job load:', j.error);
                         this.adminWithdrawRequests = w.data || [];
                         this.adminJobRequests = j.data || [];
+                        if (!u.error) this.adminUsers = u.data || [];
+                        if (!settings.error) {
+                            const map = {}; (settings.data || []).forEach(x => map[x.job_key] = !!x.is_open);
+                            this.jobSettings = { email_khusus_open: map.email_khusus !== undefined ? map.email_khusus : true, email_bebas_open: map.email_bebas !== undefined ? map.email_bebas : true };
+                        }
                     } finally {
                         this.adminLoading = false;
                         this.$nextTick(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); });
