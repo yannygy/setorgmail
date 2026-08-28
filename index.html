@@ -249,4 +249,1212 @@
 
                 <!-- POJOK KANAN (TEMA, SALDO & ADMIN) -->
                 <div class="flex items-center space-x-3">
-                    <button @click="toggleTheme" class="p-2 rounded-xl bor
+                    <button @click="toggleTheme" class="p-2 rounded-xl border text-sm transition" :class="isDarkMode ? 'border-slate-700 text-slate-300 hover:bg-slate-700' : 'border-slate-300 text-slate-700 hover:bg-slate-100'">
+                        <i :data-lucide="isDarkMode ? 'sun' : 'moon'" class="w-4 h-4"></i>
+                    </button>
+
+                    <div @click="activeTab = 'saldo'" class="cursor-pointer border px-3 py-1.5 rounded-xl flex items-center space-x-2 transition group" :class="isDarkMode ? 'bg-slate-900 border-cyan-500/30 hover:bg-slate-950' : 'bg-slate-50 border-cyan-500/40 hover:bg-slate-100'">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-500 group-hover:bg-cyan-500 group-hover:text-slate-950 transition">
+                            <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[9px] leading-none" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Saldo</div>
+                            <div class="text-xs font-bold text-cyan-500 group-hover:underline" x-text="formatIDR(currentUser.saldo)"></div>
+                        </div>
+                    </div>
+
+                    <button x-show="currentUser.role === 'admin'" @click="currentView = 'admin'" class="hidden md:block bg-amber-500/20 border border-amber-500/40 text-amber-500 text-xs px-2.5 py-1.5 rounded-lg font-semibold hover:bg-amber-500/30 transition">Admin</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- FLOATING CHAT BUTTON -->
+        <div class="fixed bottom-20 right-5 z-50 md:hidden">
+            <button @click="activeTab = 'forum'" class="relative w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-2xl transition transform active:scale-95">
+                <i data-lucide="message-square" class="w-6 h-6"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2" :class="isDarkMode ? 'border-slate-900' : 'border-white'">3</span>
+            </button>
+        </div>
+
+        <!-- BOTTOM NAVIGATION BAR MOBILE -->
+        <nav class="fixed bottom-0 left-0 right-0 border-t flex justify-around items-center h-16 z-40 md:hidden transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-400' : 'bg-white border-slate-200 text-slate-500'">
+            <button @click="activeTab = 'beranda'" :class="activeTab === 'beranda' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-1">Beranda</span>
+            </button>
+            <button @click="activeTab = 'job'" :class="activeTab === 'job' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
+                <i data-lucide="briefcase" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-1">Job</span>
+            </button>
+            <button @click="activeTab = 'tugas'" :class="activeTab === 'tugas' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
+                <i data-lucide="check-square" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-1">Tugas</span>
+            </button>
+            <button @click="activeTab = 'riwayat'" :class="activeTab === 'riwayat' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-1">Riwayat</span>
+            </button>
+            <button @click="activeTab = 'saldo'" :class="activeTab === 'saldo' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
+                <i data-lucide="wallet" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-1">Saldo</span>
+            </button>
+            <button @click="activeTab = 'profil'" :class="activeTab === 'profil' ? 'text-cyan-500 font-bold' : ''" class="flex flex-col items-center justify-center flex-1 h-full">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span class="text-[10px] mt-1">Profil</span>
+            </button>
+        </nav>
+
+        <!-- KONTEN UTAMA USER -->
+        <main class="max-w-4xl mx-auto px-4 md:px-6 py-6 flex-1 w-full space-y-6">
+            
+            <!-- HALAMAN BERANDA -->
+            <div x-show="activeTab === 'beranda'" class="space-y-6">
+                <div>
+                    <div class="text-[11px] font-semibold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">BERANDA</div>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Halo, selamat datang</h2>
+                    <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Pantau saldo dan kirim email untuk menambah penghasilanmu.</p>
+                </div>
+
+                <div class="bg-gradient-to-r from-blue-600 via-cyan-600 to-indigo-600 p-6 rounded-3xl shadow-xl text-white relative overflow-hidden space-y-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="text-xs text-cyan-100 font-medium">Saldo kamu</div>
+                            <div class="text-3xl md:text-4xl font-extrabold mt-1" x-text="formatIDR(currentUser.saldo)"></div>
+                        </div>
+                        <div class="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+                            <i data-lucide="wallet" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <div class="bg-slate-900/30 backdrop-blur-sm border border-white/10 p-3.5 rounded-2xl">
+                            <div class="text-[11px] text-cyan-100 font-medium">Reward Email Khusus</div>
+                            <div class="text-lg font-bold text-white mt-0.5">Rp1.500</div>
+                        </div>
+                        <div class="bg-slate-900/30 backdrop-blur-sm border border-white/10 p-3.5 rounded-2xl">
+                            <div class="text-[11px] text-cyan-100 font-medium">Reward Email Bebas</div>
+                            <div class="text-lg font-bold text-white mt-0.5">Rp750</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="border p-4 rounded-3xl text-center transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/65' : 'bg-white border-slate-200 shadow-sm'">
+                        <div class="text-lg font-bold text-amber-500" x-text="currentUser.riwayat.filter(r => r.status === 'Menunggu Verifikasi').length">0</div>
+                        <div class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Pending</div>
+                    </div>
+                    <div class="border p-4 rounded-3xl text-center transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/65' : 'bg-white border-slate-200 shadow-sm'">
+                        <div class="text-lg font-bold text-emerald-500" x-text="currentUser.riwayat.filter(r => r.status === 'Berhasil' && !r.tipe.toLowerCase().includes('penarikan')).length">0</div>
+                        <div class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Diterima</div>
+                    </div>
+                    <div class="border p-4 rounded-3xl text-center transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/65' : 'bg-white border-slate-200 shadow-sm'">
+                        <div class="text-sm md:text-lg font-bold text-cyan-500 truncate" x-text="formatIDR(currentUser.saldo)"></div>
+                        <div class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Saldo</div>
+                    </div>
+                </div>
+
+                <div class="border p-6 rounded-3xl space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/65' : 'bg-white border-slate-200 shadow-sm'">
+                    <div class="flex items-center space-x-2 text-cyan-500">
+                        <div class="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+                            <i data-lucide="zap" class="w-4 h-4"></i>
+                        </div>
+                        <h3 class="text-base font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Generate Email</h3>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="block text-xs font-medium" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Jumlah (10-50)</label>
+                        <div class="flex space-x-2">
+                            <input type="number" min="10" max="50" x-model.number="generateCount" class="w-full border rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
+                            <button @click="handleGenerateEmail" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-2xl text-xs transition shadow-md whitespace-nowrap">Generate</button>
+                        </div>
+                        <p class="text-[11px] leading-relaxed pt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">
+                            Generate ini hanya alat bantu. Jangan langsung setor — daftarkan dulu di aplikasi Gmail dengan password wajib <span class="text-cyan-500 font-semibold">fineirga</span>, setelah terdaftar dengan password itu baru setorkan ke web.
+                        </p>
+                    </div>
+
+                    <template x-if="generatedEmails.length > 0">
+                        <div class="mt-4 pt-4 border-t space-y-3" :class="isDarkMode ? 'border-slate-700/60' : 'border-slate-200'">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-xs font-bold uppercase tracking-wider" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Hasil Generate Alamat Gmail (Unik):</h4>
+                                <button @click="copyAllEmails" class="text-[11px] text-cyan-500 hover:underline flex items-center space-x-1">
+                                    <i data-lucide="copy" class="w-3 h-3"></i>
+                                    <span>Salin Semua</span>
+                                </button>
+                            </div>
+                            <div class="border rounded-2xl p-3 max-h-48 overflow-y-auto space-y-2 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900 border-slate-700/60' : 'bg-slate-50 border-slate-200'">
+                                <template x-for="(email, index) in generatedEmails" :key="index">
+                                    <div class="flex justify-between items-center px-3 py-2 rounded-xl text-xs transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800/60 text-cyan-300' : 'bg-white text-cyan-700 border border-slate-200'">
+                                        <span class="font-mono" x-text="email"></span>
+                                        <button @click="copySingleEmail(email)" class="text-slate-400 hover:text-cyan-500 transition" title="Salin Email">
+                                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- HALAMAN JOB -->
+            <div x-show="activeTab === 'job'" class="space-y-6">
+                <div>
+                    <div class="text-[11px] font-bold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">JOB</div>
+                    <h2 class="text-2xl font-extrabold tracking-tight mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Kirim email</h2>
+                    <p class="text-xs mt-1 leading-relaxed" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Pilih jenis job. Reward masuk otomatis setelah email disetujui admin.</p>
+                </div>
+
+                <div class="border p-4 rounded-3xl shadow-sm flex items-center space-x-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                    <div class="w-11 h-11 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center shrink-0">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold">Estimasi ACC 1–2 Hari</h3>
+                        <p class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Akun diproses setelah disetujui admin.</p>
+                    </div>
+                </div>
+
+                <div class="border p-5 rounded-3xl space-y-3 transition-colors duration-300" :class="isDarkMode ? 'bg-amber-950/20 border-amber-500/30 text-amber-200' : 'bg-amber-50/70 border-amber-200/80 text-amber-900'">
+                    <div class="flex items-start space-x-3">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i>
+                        <p class="text-xs leading-relaxed">
+                            Email wajib sudah terdaftar, umur akun minimal 18 tahun, tanpa nomor telepon/terkait nomor telepon, tanpa email pemulihan.
+                        </p>
+                    </div>
+                    <p class="text-xs font-medium leading-relaxed pl-8">
+                        Wajib: daftarkan akun Gmail menggunakan password <span class="px-1.5 py-0.5 rounded font-mono font-bold" :class="isDarkMode ? 'bg-amber-900/50 text-amber-300' : 'bg-amber-200/70 text-amber-950'">lele1122</span> untuk semua akun yang dikirim.
+                    </p>
+                </div>
+
+                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-base font-bold">Email Khusus</h3>
+                            <p class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Wajib sesuai hasil generate, satu per baris</p>
+                        </div>
+                        <span class="bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 text-xs font-bold px-3 py-1 rounded-full">Reward Rp1.500</span>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <label class="block text-xs font-medium" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Masukkan daftar email (satu per baris)</label>
+                        <textarea rows="3" x-model="jobForm.emailKhusus" placeholder="contoh: ryan08301000abcde@gmail.com" class="w-full border rounded-2xl p-3 text-xs focus:outline-none focus:border-cyan-500 font-mono transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'"></textarea>
+                        <button @click="submitJobGmail('Email Khusus', 1500)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-sm">Setor Email Khusus</button>
+                    </div>
+                </div>
+
+                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-base font-bold">Email Bebas</h3>
+                            <p class="text-xs mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Email bebas (selain format khusus), satu per baris</p>
+                        </div>
+                        <span class="bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 text-xs font-bold px-3 py-1 rounded-full">Reward Rp750</span>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <label class="block text-xs font-medium" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Masukkan daftar email (satu per baris)</label>
+                        <textarea rows="3" x-model="jobForm.emailBebas" placeholder="contoh: emailbebasanda@gmail.com" class="w-full border rounded-2xl p-3 text-xs focus:outline-none focus:border-cyan-500 font-mono transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'"></textarea>
+                        <button @click="submitJobGmail('Email Bebas', 750)" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-sm">Setor Email Bebas</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HALAMAN TUGAS -->
+            <div x-show="activeTab === 'tugas'" class="space-y-6">
+                <div>
+                    <div class="text-[11px] font-bold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">TUGAS</div>
+                    <h2 class="text-2xl font-extrabold tracking-tight mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Kerjakan tugas</h2>
+                    <p class="text-xs mt-1 leading-relaxed" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Selesaikan tugas, upload bukti, lalu tunggu persetujuan admin untuk dapat reward.</p>
+                </div>
+
+                <!-- Kartu Tugas Tersedia -->
+                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                    <h3 class="text-base font-bold">Tugas Tersedia</h3>
+                    <div class="border rounded-2xl py-8 text-center text-xs transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900/50 border-slate-700 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'">
+                        Belum ada tugas tersedia.
+                    </div>
+                </div>
+
+                <!-- Kartu Pengerjaanku -->
+                <div class="border p-5 rounded-3xl shadow-sm space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/80 text-white' : 'bg-white border-slate-200'">
+                    <h3 class="text-base font-bold">Pengerjaanku</h3>
+                    <div class="border rounded-2xl py-8 text-center text-xs transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900/50 border-slate-700 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'">
+                        Belum ada pengerjaan.
+                    </div>
+                </div>
+            </div>
+
+            <!-- HALAMAN FORUM CHAT -->
+            <div x-show="activeTab === 'forum'" class="space-y-4">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Forum Chat Komunitas</h2>
+                    <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Diskusi dan tanya jawab dengan sesama pekerja YANNJOB.</p>
+                </div>
+
+                <div class="border rounded-2xl flex flex-col h-[520px] transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60' : 'bg-white border-slate-200 shadow-sm'">
+                    <div class="p-4 border-b flex items-center justify-between rounded-t-2xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800/80 border-slate-700/60' : 'bg-slate-50 border-slate-200'">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-500 flex items-center justify-center font-bold text-sm">#</div>
+                            <div>
+                                <h4 class="font-bold text-sm" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Diskusi Umum Pekerja</h4>
+                                <p class="text-[10px]" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">YANNJOB Public Forum</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 p-4 overflow-y-auto space-y-4" id="chatContainer">
+                        <template x-for="chat in forumMessages" :key="chat.id">
+                            <div class="flex flex-col" :class="chat.isMe ? 'items-end' : 'items-start'">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="text-[11px] font-semibold" :class="chat.isMe ? 'text-cyan-500' : (isDarkMode ? 'text-slate-300' : 'text-slate-700')" x-text="chat.sender"></span>
+                                    <span class="text-[9px]" :class="isDarkMode ? 'text-slate-500' : 'text-slate-400'" x-text="chat.time"></span>
+                                </div>
+                                <div class="max-w-xs md:max-w-md px-4 py-2.5 rounded-2xl text-xs"
+                                     :class="chat.isMe ? 'bg-cyan-500 text-slate-950 rounded-tr-none font-medium shadow' : (isDarkMode ? 'bg-slate-900 text-slate-200 rounded-tl-none border border-slate-700/60' : 'bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200')">
+                                    <span x-text="chat.text"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="p-3 border-t rounded-b-2xl transition-colors duration-300" :class="isDarkMode ? 'border-slate-700/60 bg-slate-900/50' : 'border-slate-200 bg-slate-50'">
+                        <form @submit.prevent="sendChatMessage" class="flex space-x-2">
+                            <input type="text" x-model="newChatMessage" placeholder="Tulis pesan diskusi..." class="flex-1 border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'">
+                            <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs transition flex items-center space-x-1 shadow">
+                                <span>Kirim</span>
+                                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HALAMAN RIWAYAT -->
+            <div x-show="activeTab === 'riwayat'" class="space-y-6">
+                <div>
+                    <div class="text-[11px] font-semibold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">RIWAYAT</div>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Aktivitas saldo</h2>
+                    <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Semua job, tugas, dan penarikan kamu tercatat di sini.</p>
+                </div>
+
+                <div class="space-y-3">
+                    <template x-for="item in currentUser.riwayat" :key="item.id">
+                        <div class="border p-4 rounded-3xl flex items-center justify-between transition hover:border-slate-500 duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60 text-white' : 'bg-white border-slate-200 shadow-sm'">
+                            <div class="flex items-center space-x-3.5">
+                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
+                                     :class="item.jumlah.startsWith('-') ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-500'">
+                                    <i :data-lucide="item.jumlah.startsWith('-') ? 'arrow-down' : 'arrow-up'" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold" x-text="item.tipe"></h4>
+                                    <p class="text-[11px] mt-0.5" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'" x-text="`${item.keterangan} • ${item.tanggal}`"></p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm font-extrabold"
+                                     :class="item.jumlah.startsWith('-') ? 'text-red-500' : 'text-emerald-500'"
+                                     x-text="item.jumlah"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- HALAMAN SALDO & PENARIKAN -->
+            <div x-show="activeTab === 'saldo'" class="space-y-6">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold" :class="isDarkMode ? 'text-white' : 'text-slate-900'">Dompet Saldo & Penarikan</h2>
+                    <p class="text-xs mt-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-600'">Kelola pendapatan dan ajukan pencairan komisi Anda ke akun DANA.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border p-5 rounded-2xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-cyan-500/40 text-white' : 'bg-white border-cyan-500/30 shadow-sm'">
+                        <div class="text-xs mb-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Saldo Tersedia</div>
+                        <div class="text-2xl font-bold text-cyan-500" x-text="formatIDR(currentUser.saldo)"></div>
+                    </div>
+                    <div class="border p-5 rounded-2xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60 text-white' : 'bg-white border-slate-200 shadow-sm'">
+                        <div class="text-xs mb-1" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Total Penghasilan</div>
+                        <div class="text-2xl font-bold" x-text="formatIDR(currentUser.totalPenghasilan)"></div>
+                    </div>
+                </div>
+
+                <div class="border p-6 rounded-2xl max-w-2xl transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60 text-white' : 'bg-white border-slate-200 shadow-sm'">
+                    <h3 class="text-lg font-bold mb-4">Formulir Penarikan Saldo (DANA)</h3>
+                    <form @submit.prevent="ajukanPenarikan" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Metode Pembayaran</label>
+                            <input type="text" readonly value="DANA (DANA Only)" class="w-full border rounded-xl px-4 py-2.5 text-sm text-cyan-500 font-semibold focus:outline-none transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-100 border-slate-300'">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Nomor Akun DANA / No. HP</label>
+                            <input type="text" x-model="withdrawForm.nomor" required placeholder="Contoh: 081234567890" class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Jumlah Penarikan (Rp)</label>
+                            <input type="number" min="10000" x-model.number="withdrawForm.jumlah" required placeholder="Min. Rp10.000" class="w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
+                        </div>
+                        <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-cyan-500/25">Ajukan Penarikan Sekarang</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- HALAMAN PROFIL -->
+            <div x-show="activeTab === 'profil'" class="space-y-6">
+                <div>
+                    <div class="text-[11px] font-semibold tracking-wider uppercase" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'">Profil</div>
+                    <h2 class="text-xl md:text-2xl font-bold mt-0.5" :class="isDarkMode ? 'text-white' : 'text-slate-900'" x-text="currentUser.username"></h2>
+                    <p class="text-xs" :class="isDarkMode ? 'text-slate-400' : 'text-slate-500'" x-text="currentUser.email"></p>
+                </div>
+
+                <div class="bg-gradient-to-br from-cyan-600 to-blue-700 p-6 rounded-3xl shadow-xl relative overflow-hidden text-white space-y-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="text-xs font-medium text-cyan-100">Saldo kamu</div>
+                            <div class="text-3xl font-extrabold mt-1" x-text="formatIDR(currentUser.saldo)"></div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+                            <i data-lucide="wallet" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="border-t border-white/20 pt-4 flex items-center space-x-2 text-xs text-cyan-100">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <span x-text="`Bergabung ${currentUser.tanggalBergabung}`"></span>
+                    </div>
+                </div>
+
+                <div class="border p-6 rounded-3xl space-y-4 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-800 border-slate-700/60 text-white' : 'bg-white border-slate-200 shadow-sm'">
+                    <div class="flex items-center space-x-2 text-cyan-500">
+                        <div class="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center">
+                            <i data-lucide="lock" class="w-4 h-4"></i>
+                        </div>
+                        <h3 class="text-base font-bold">Ganti Password</h3>
+                    </div>
+                    <form @submit.prevent="handleGantiPassword" class="space-y-3 pt-2">
+                        <div>
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Password Lama</label>
+                            <input type="password" x-model="passwordForm.lama" required class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Password Baru</label>
+                            <input type="password" x-model="passwordForm.baru" required class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium mb-1" :class="isDarkMode ? 'text-slate-300' : 'text-slate-700'">Konfirmasi Password Baru</label>
+                            <input type="password" x-model="passwordForm.konfirmasi" required class="w-full border rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-cyan-500 transition-colors" :class="isDarkMode ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'">
+                        </div>
+                        <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-md">Perbarui Password</button>
+                    </form>
+                </div>
+
+<div id="gigajob-profile-security">
+  <div class="gj-security-card">
+    <div class="gj-security-title">🔐 Keamanan Akun</div>
+    <div class="gj-security-desc">
+      Atur ulang password akun melalui email yang terdaftar.
+    </div>
+    <button type="button" class="gj-reset-btn" onclick="YANNJOBOpenProfileReset()">
+      Lupa Password / Reset Password
+    </button>
+  </div>
+</div>
+
+                <div class="pt-2">
+                    <button @click="logout" class="w-full bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20 py-3 rounded-2xl text-xs font-semibold transition flex items-center justify-center space-x-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span>Keluar Akun</span>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div x-show="currentView === 'admin'" class="min-h-full flex flex-col" :class="isDarkMode ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-900'">
+        <header class="border-b sticky top-0 z-40 transition-colors duration-300" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center font-bold text-slate-950">A</div>
+                    <span class="font-bold text-lg">YANNJOB <span class="text-amber-500 text-xs px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">Admin Panel</span></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button @click="loadAdminRequests" class="text-xs px-3 py-2 rounded-xl border font-medium" :class="isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'">↻ Refresh</button>
+                    <button @click="currentView = 'app'; activeTab = 'beranda'" class="text-xs px-4 py-2 rounded-xl transition font-medium border" :class="isDarkMode ? 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-300' : 'bg-white hover:bg-slate-100 border-slate-300 text-slate-700'">Kembali ke User Mode</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 md:px-6 py-6 flex-1 w-full space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border p-5 rounded-2xl" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+                    <div class="text-xs text-slate-400">Penarikan Menunggu</div>
+                    <div class="text-2xl font-bold text-amber-500 mt-1" x-text="adminWithdrawRequests.filter(x => x.status === 'Menunggu Verifikasi').length"></div>
+                </div>
+                <div class="border p-5 rounded-2xl" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+                    <div class="text-xs text-slate-400">Setoran Gmail Menunggu</div>
+                    <div class="text-2xl font-bold text-cyan-500 mt-1" x-text="adminJobRequests.filter(x => x.status === 'Menunggu Verifikasi').length"></div>
+                </div>
+            </div>
+
+            <div class="border p-6 rounded-2xl space-y-4" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+                <div class="flex justify-between items-center gap-3">
+                    <div>
+                        <h3 class="text-base font-bold">💸 Permintaan Penarikan Saldo</h3>
+                        <p class="text-xs text-slate-400 mt-1">Admin dapat melihat username, nomor DANA, dan jumlah penarikan.</p>
+                    </div>
+                    <span x-show="adminLoading" class="text-xs text-slate-400">Memuat...</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs min-w-[760px]">
+                        <thead class="border-b" :class="isDarkMode ? 'bg-slate-800/60 text-slate-400 border-slate-800' : 'bg-slate-50 text-slate-600 border-slate-200'"><tr>
+                            <th class="p-3">Username</th><th class="p-3">Email</th><th class="p-3">DANA / No. HP</th><th class="p-3">Jumlah</th><th class="p-3">Status</th><th class="p-3">Aksi</th>
+                        </tr></thead>
+                        <tbody class="divide-y" :class="isDarkMode ? 'divide-slate-800' : 'divide-slate-200'">
+                            <template x-for="item in adminWithdrawRequests" :key="item.id">
+                                <tr>
+                                    <td class="p-3 font-bold" x-text="item.username || '-' "></td>
+                                    <td class="p-3" x-text="item.user_email || '-' "></td>
+                                    <td class="p-3 font-mono" x-text="item.nomor || '-' "></td>
+                                    <td class="p-3 text-cyan-500 font-bold" x-text="formatIDR(item.jumlah)"></td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded-full text-[10px] font-semibold" :class="item.status === 'Berhasil' ? 'bg-emerald-500/10 text-emerald-500' : item.status === 'Ditolak' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'" x-text="item.status"></span></td>
+                                    <td class="p-3 whitespace-nowrap" x-show="item.status === 'Menunggu Verifikasi'">
+                                        <button @click="approveWithdrawRequest(item.id)" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-[10px] mr-1">Setujui</button>
+                                        <button @click="rejectWithdrawRequest(item.id)" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold px-3 py-1.5 rounded-lg text-[10px]">Tolak</button>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="!adminWithdrawRequests.length"><td colspan="6" class="p-6 text-center text-slate-400">Belum ada permintaan penarikan.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="border p-6 rounded-2xl space-y-4" :class="isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'">
+                <div>
+                    <h3 class="text-base font-bold">📧 Setoran Gmail Masuk</h3>
+                    <p class="text-xs text-slate-400 mt-1">Admin dapat melihat username pengguna dan Gmail yang disetorkan.</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs min-w-[820px]">
+                        <thead class="border-b" :class="isDarkMode ? 'bg-slate-800/60 text-slate-400 border-slate-800' : 'bg-slate-50 text-slate-600 border-slate-200'"><tr>
+                            <th class="p-3">Username</th><th class="p-3">Email Akun</th><th class="p-3">Gmail Disetorkan</th><th class="p-3">Jenis</th><th class="p-3">Reward</th><th class="p-3">Status</th><th class="p-3">Aksi</th>
+                        </tr></thead>
+                        <tbody class="divide-y" :class="isDarkMode ? 'divide-slate-800' : 'divide-slate-200'">
+                            <template x-for="item in adminJobRequests" :key="item.id">
+                                <tr>
+                                    <td class="p-3 font-bold" x-text="item.username || '-' "></td>
+                                    <td class="p-3" x-text="item.user_email || '-' "></td>
+                                    <td class="p-3 font-mono text-cyan-500" x-text="item.email_setoran || '-' "></td>
+                                    <td class="p-3" x-text="item.jenis || '-' "></td>
+                                    <td class="p-3 font-bold" x-text="formatIDR(item.reward)"></td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded-full text-[10px] font-semibold" :class="item.status === 'Berhasil' ? 'bg-emerald-500/10 text-emerald-500' : item.status === 'Ditolak' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'" x-text="item.status"></span></td>
+                                    <td class="p-3 whitespace-nowrap" x-show="item.status === 'Menunggu Verifikasi'">
+                                        <button @click="approveJobRequest(item.id)" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg text-[10px] mr-1">Setujui</button>
+                                        <button @click="rejectJobRequest(item.id)" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold px-3 py-1.5 rounded-lg text-[10px]">Tolak</button>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr x-show="!adminJobRequests.length"><td colspan="7" class="p-6 text-center text-slate-400">Belum ada setoran Gmail.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+/* YANNJOB production auth bridge: Supabase Auth + optional EmailJS welcome mail. */
+(function () {
+  const C = window.YANNJOB_CONFIG || {};
+  if (window.supabase && C.SUPABASE_URL && C.SUPABASE_ANON_KEY) {
+    window.gigaSupabase = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
+  }
+
+  window.gigaEmailWelcome = async function(user) {
+    try {
+      if (!window.emailjs || !C.EMAILJS_SERVICE_ID || !C.EMAILJS_WELCOME_TEMPLATE_ID) return false;
+      await emailjs.send(C.EMAILJS_SERVICE_ID, C.EMAILJS_WELCOME_TEMPLATE_ID, {
+        to_email: user.email || "",
+        to_name: user.user_metadata?.name || user.user_metadata?.username || "Pengguna",
+        app_name: "YANNJOB"
+      });
+      return true;
+    } catch (e) {
+      console.warn("Welcome email:", e);
+      return false;
+    }
+  };
+
+  window.gigaLoadSession = async function() {
+    if (!window.gigaSupabase) return null;
+    const { data } = await gigaSupabase.auth.getSession();
+    return data?.session || null;
+  };
+})();
+
+        function appData() {
+            return {
+                currentView: 'landing',
+                activeTab: 'beranda',
+                isDarkMode: true,
+                toasts: [],
+                generateCount: 10,
+                generatedEmails: [],
+                forgotEmail: '',
+                
+                loginForm: { identifier: '', password: '' },
+                regForm: { name: '', username: '', email: '', password: '', confirmPassword: '' },
+                withdrawForm: { metode: 'DANA', nomor: '', jumlah: '' },
+                jobForm: { emailKhusus: '', emailBebas: '' },
+                passwordForm: { lama: '', baru: '', konfirmasi: '' },
+                adminWithdrawRequests: [],
+                adminJobRequests: [],
+                adminLoading: false,
+
+                currentUser: {
+                    name: 'Ryan',
+                    username: 'yanz',
+                    email: 'ryan08301000@gmail.com',
+                    noHp: '081234567890',
+                    role: 'admin',
+                    tanggalBergabung: '23 Agu 2026',
+                    saldo: 900,
+                    totalPenghasilan: 900,
+                    riwayat: [
+                        { id: 1, tipe: 'Email Khusus', keterangan: 'contohuser1@gmail.com', tanggal: '23 Agu 2026 · 21:00', jumlah: '+Rp 900', status: 'Berhasil' }
+                    ]
+                },
+
+                newChatMessage: '',
+                forumMessages: [],
+                forumChannel: null,
+
+                async loadProductionUser(authUser) {
+                    if (!authUser || !window.gigaSupabase) return;
+                    const meta = authUser.user_metadata || {};
+                    let profile = null;
+                    try {
+                      const { data, error } = await gigaSupabase.from('profiles')
+                        .select('*').eq('id', authUser.id).maybeSingle();
+                      if (error) console.warn('Profile load:', error);
+                      profile = data;
+                    } catch(e) { console.warn('Profile load:', e); }
+                    this.currentUser = {
+                      ...this.currentUser,
+                      id: authUser.id,
+                      name: profile?.name || meta.name || authUser.email?.split('@')[0] || 'Pengguna',
+                      username: profile?.username || meta.username || authUser.email?.split('@')[0] || '',
+                      email: authUser.email || '',
+                      role: (authUser.email?.toLowerCase() === 'ryan08301000@gmail.com') ? 'admin' : (profile?.role || 'user'),
+                      saldo: Number(profile?.saldo || 0),
+                      totalPenghasilan: Number(profile?.total_penghasilan || 0),
+                      riwayat: []
+                    };
+                    await this.loadForumMessages();
+                    this.subscribeForum();
+                },
+
+                async loadForumMessages() {
+                    if (!window.gigaSupabase || !this.currentUser?.id) return;
+                    const { data, error } = await gigaSupabase
+                      .from('forum_messages')
+                      .select('id,user_id,text,created_at,profiles(username,name)')
+                      .order('created_at', { ascending: true });
+                    if (error) {
+                      console.error('Forum load:', error);
+                      this.showToast('Forum belum bisa dimuat: ' + error.message, 'error');
+                      return;
+                    }
+                    this.forumMessages = (data || []).map(m => ({
+                      id: m.id,
+                      user_id: m.user_id,
+                      sender: m.profiles?.username || m.profiles?.name || 'Pengguna',
+                      text: m.text,
+                      time: new Date(m.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                      isMe: m.user_id === this.currentUser.id
+                    }));
+                    this.$nextTick(() => {
+                      const c = document.getElementById('chatContainer');
+                      if (c) c.scrollTop = c.scrollHeight;
+                    });
+                },
+
+                subscribeForum() {
+                    if (!window.gigaSupabase || this.forumChannel) return;
+                    this.forumChannel = gigaSupabase
+                      .channel('yannjob-public-forum')
+                      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'forum_messages' }, async payload => {
+                        const m = payload.new;
+                        if (!m || this.forumMessages.some(x => x.id === m.id)) return;
+                        let sender = 'Pengguna';
+                        try {
+                          const { data } = await gigaSupabase.from('profiles').select('username,name').eq('id', m.user_id).maybeSingle();
+                          sender = data?.username || data?.name || sender;
+                        } catch (_) {}
+                        this.forumMessages.push({
+                          id: m.id, user_id: m.user_id, sender, text: m.text,
+                          time: new Date(m.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+                          isMe: m.user_id === this.currentUser.id
+                        });
+                        this.$nextTick(() => {
+                          const c = document.getElementById('chatContainer');
+                          if (c) c.scrollTop = c.scrollHeight;
+                        });
+                      })
+                      .subscribe();
+                },
+
+                async unsubscribeForum() {
+                    if (window.gigaSupabase && this.forumChannel) {
+                      try { await gigaSupabase.removeChannel(this.forumChannel); } catch (_) {}
+                    }
+                    this.forumChannel = null;
+                },
+
+                async init() {
+                    try {
+                        const session = await window.gigaLoadSession();
+                        if (session) {
+                          await this.loadProductionUser(session.user);
+                          this.currentView = 'app';
+                          if (this.currentUser.role === 'admin') await this.loadAdminRequests();
+                        }
+                        if (window.gigaSupabase) {
+                          gigaSupabase.auth.onAuthStateChange(async (event, session) => {
+                            if (event === 'SIGNED_OUT') {
+                              await this.unsubscribeForum();
+                              this.currentView = 'landing';
+                              this.currentUser = { ...this.currentUser, id: null, role: 'user', email: '', username: '', saldo: 0, totalPenghasilan: 0 };
+                            }
+                          });
+                        }
+                    } catch (e) { console.warn('Session init:', e); }
+                    try {
+                        if (window.lucide && typeof lucide.createIcons === 'function') {
+                            setTimeout(() => lucide.createIcons(), 100);
+                        }
+                    } catch (e) { console.warn('Icon init:', e); }
+                },
+
+                toggleTheme() {
+                    this.isDarkMode = !this.isDarkMode;
+                    setTimeout(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }, 50);
+                },
+
+                showToast(message, type = 'success') {
+                    const id = Date.now();
+                    this.toasts.push({ id, message, type });
+                    setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 3500);
+                    setTimeout(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }, 50);
+                },
+
+                formatIDR(val) {
+                    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
+                },
+
+                async handleLogin() {
+                    if (!window.gigaSupabase) {
+                        this.showToast('Supabase belum dikonfigurasi.', 'error'); return;
+                    }
+                    const identifier = this.loginForm.identifier.trim();
+                    const password = this.loginForm.password;
+                    if (!identifier || !password) {
+                        this.showToast('Email/username dan password wajib diisi.', 'error'); return;
+                    }
+                    let email = identifier;
+                    if (!identifier.includes('@')) {
+                        const { data: profile, error } = await gigaSupabase
+                          .from('profiles').select('email').eq('username', identifier).maybeSingle();
+                        if (error || !profile) {
+                            this.showToast('Akun tidak ditemukan.', 'error'); return;
+                        }
+                        email = profile.email;
+                    }
+                    const { data, error } = await gigaSupabase.auth.signInWithPassword({ email, password });
+                    if (error) { this.showToast('Username/email atau password salah.', 'error'); return; }
+                    await this.loadProductionUser(data.user);
+                    if (this.currentUser.role === 'admin') await this.loadAdminRequests();
+                    this.showToast('Login berhasil!', 'success');
+                    this.currentView = 'app';
+                    setTimeout(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }, 50);
+                },
+
+                async handleForgotSend() {
+                    const email = this.forgotEmail.trim().toLowerCase();
+                    if (!email) { this.showToast('Masukkan alamat email dengan benar!', 'error'); return; }
+                    if (!window.gigaSupabase) { this.showToast('Supabase belum dikonfigurasi.', 'error'); return; }
+                    const redirectTo = `${location.origin}${location.pathname}?reset=1`;
+                    const { error } = await gigaSupabase.auth.resetPasswordForEmail(email, { redirectTo });
+                    if (error) { this.showToast(error.message || 'Gagal mengirim email reset.', 'error'); return; }
+                    this.showToast('Jika email terdaftar, link reset sudah dikirim. Cek Gmail.', 'success');
+                    this.forgotEmail = '';
+                },
+
+                async handleRegister() {
+                    const f = this.regForm;
+                    if (!f.name || !f.username || !f.email || !f.password || !f.confirmPassword) {
+                        this.showToast('Lengkapi semua data.', 'error'); return;
+                    }
+                    if (f.password !== f.confirmPassword) { this.showToast('Konfirmasi password tidak cocok.', 'error'); return; }
+                    if (f.password.length < 8) { this.showToast('Password minimal 8 karakter.', 'error'); return; }
+                    if (!window.gigaSupabase) { this.showToast('Supabase belum dikonfigurasi.', 'error'); return; }
+                    const { data, error } = await gigaSupabase.auth.signUp({
+                        email: f.email.trim().toLowerCase(),
+                        password: f.password,
+                        options: { data: { name: f.name.trim(), username: f.username.trim() } }
+                    });
+                    if (error) { this.showToast(error.message || 'Pendaftaran gagal.', 'error'); return; }
+                    if (data.user) {
+                        await window.gigaEmailWelcome(data.user);
+                    }
+                    this.showToast('Akun berhasil dibuat. Cek email jika verifikasi diaktifkan.', 'success');
+                    this.currentView = 'login';
+                },
+
+                async logout() {
+                    await this.unsubscribeForum();
+                    if (window.gigaSupabase) await gigaSupabase.auth.signOut();
+                    this.currentView = 'landing';
+                    this.loginForm = { identifier: '', password: '' };
+                    this.showToast('Berhasil logout', 'success');
+                },
+
+                async handleGantiPassword() {
+                    if(this.passwordForm.baru !== this.passwordForm.konfirmasi) {
+                        this.showToast('Konfirmasi password baru tidak cocok!', 'error'); return;
+                    }
+                    if(this.passwordForm.baru.length < 8) {
+                        this.showToast('Password baru minimal 8 karakter.', 'error'); return;
+                    }
+                    if (!window.gigaSupabase) { this.showToast('Supabase belum dikonfigurasi.', 'error'); return; }
+                    const { error } = await gigaSupabase.auth.updateUser({ password: this.passwordForm.baru });
+                    if (error) { this.showToast(error.message || 'Gagal memperbarui password.', 'error'); return; }
+                    this.showToast('Password berhasil diperbarui!', 'success');
+                    this.passwordForm = { lama: '', baru: '', konfirmasi: '' };
+                },
+
+                handleGenerateEmail() {
+                    this.generatedEmails = [];
+                    const baseEmail = this.currentUser.email.split('@')[0];
+                    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+                    
+                    for (let i = 0; i < this.generateCount; i++) {
+                        let randomStr = '';
+                        for (let j = 0; j < 5; j++) {
+                            randomStr += chars.charAt(Math.floor(Math.random() * chars.length));
+                        }
+                        this.generatedEmails.push(`${baseEmail}${randomStr}@gmail.com`);
+                    }
+                    
+                    this.showToast(`Berhasil men-generate ${this.generateCount} alamat Gmail unik!`, 'success');
+                    setTimeout(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }, 50);
+                },
+
+                copySingleEmail(email) {
+                    navigator.clipboard.writeText(email);
+                    this.showToast(`Berhasil menyalin: ${email}`, 'success');
+                },
+
+                copyAllEmails() {
+                    const allText = this.generatedEmails.join('\n');
+                    navigator.clipboard.writeText(allText);
+                    this.showToast('Semua alamat email berhasil disalin!', 'success');
+                },
+
+                async submitJobGmail(jenis, reward) {
+                    const inputVal = jenis === 'Email Khusus' ? this.jobForm.emailKhusus : this.jobForm.emailBebas;
+                    if(!inputVal.trim()) {
+                        this.showToast('Masukkan minimal 1 email terlebih dahulu!', 'error');
+                        return;
+                    }
+                    if (!window.gigaSupabase || !this.currentUser?.id) {
+                        this.showToast('Silakan login terlebih dahulu.', 'error');
+                        return;
+                    }
+
+                    const lines = inputVal.trim().split(/\n+/).map(v => v.trim()).filter(Boolean);
+                    const rows = lines.map(emailLine => ({
+                        user_id: this.currentUser.id,
+                        username: this.currentUser.username,
+                        user_email: this.currentUser.email,
+                        jenis: jenis,
+                        email_setoran: emailLine,
+                        reward: reward,
+                        status: 'Menunggu Verifikasi'
+                    }));
+                    const { data, error } = await gigaSupabase.from('job_submissions').insert(rows).select('*');
+                    if (error) {
+                        console.error('Job submission:', error);
+                        this.showToast('Setoran gagal disimpan. Pastikan tabel job_submissions sudah dibuat di Supabase.', 'error');
+                        return;
+                    }
+
+                    (data || rows).forEach((row, idx) => {
+                        this.currentUser.riwayat.unshift({
+                            id: row.id || ('job-' + Date.now() + '-' + idx),
+                            tipe: jenis,
+                            keterangan: row.email_setoran || lines[idx],
+                            tanggal: new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) + ' · ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                            jumlah: `+Rp ${reward.toLocaleString('id-ID')}`,
+                            status: 'Menunggu Verifikasi'
+                        });
+                    });
+
+                    if(jenis === 'Email Khusus') this.jobForm.emailKhusus = '';
+                    if(jenis === 'Email Bebas') this.jobForm.emailBebas = '';
+                    this.showToast('Setoran Gmail berhasil dikirim. Menunggu verifikasi admin.', 'success');
+                    if (this.currentUser.role === 'admin') await this.loadAdminRequests();
+                    setTimeout(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }, 50);
+                },
+
+                async setujuiJobAdmin(id) {
+                    const item = this.currentUser.riwayat.find(r => r.id === id);
+                    if(item) {
+                        item.status = 'Berhasil';
+                        const nominal = parseInt(item.jumlah.replace(/[^0-9]/g, ''));
+                        this.currentUser.saldo += nominal;
+                        this.currentUser.totalPenghasilan += nominal;
+                        this.showToast('Job disetujui, saldo ditambahkan ke pengguna!', 'success');
+                    }
+                },
+
+                async ajukanPenarikan() {
+                    const jumlahTarik = Number(this.withdrawForm.jumlah);
+                    if (!jumlahTarik || jumlahTarik < 10000) {
+                        this.showToast('Jumlah penarikan minimal Rp10.000.', 'error');
+                        return;
+                    }
+                    if(jumlahTarik > Number(this.currentUser.saldo)) {
+                        this.showToast('Saldo tidak mencukupi untuk penarikan ini!', 'error');
+                        return;
+                    }
+                    if(!window.gigaSupabase || !this.currentUser?.id) {
+                        this.showToast('Silakan login terlebih dahulu.', 'error');
+                        return;
+                    }
+
+                    const { data, error } = await gigaSupabase.from('withdraw_requests').insert({
+                        user_id: this.currentUser.id,
+                        username: this.currentUser.username,
+                        user_email: this.currentUser.email,
+                        metode: 'DANA',
+                        nomor: this.withdrawForm.nomor,
+                        jumlah: jumlahTarik,
+                        status: 'Menunggu Verifikasi'
+                    }).select('*').single();
+                    if (error) {
+                        console.error('Withdraw request:', error);
+                        this.showToast('Penarikan gagal disimpan. Pastikan tabel withdraw_requests sudah dibuat di Supabase.', 'error');
+                        return;
+                    }
+
+                    this.currentUser.riwayat.unshift({
+                        id: data.id,
+                        tipe: 'Penarikan Saldo',
+                        keterangan: `Pencairan ke DANA (${this.withdrawForm.nomor})`,
+                        tanggal: new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) + ' · ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                        jumlah: `-Rp ${jumlahTarik.toLocaleString('id-ID')}`,
+                        status: 'Menunggu Verifikasi'
+                    });
+
+                    this.showToast('Penarikan berhasil diajukan. Menunggu persetujuan admin.', 'success');
+                    this.withdrawForm = { metode: 'DANA', nomor: '', jumlah: '' };
+                    setTimeout(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); }, 50);
+                },
+
+                async loadAdminRequests() {
+                    if (this.currentUser.role !== 'admin' || !window.gigaSupabase) return;
+                    this.adminLoading = true;
+                    try {
+                        const [w, j] = await Promise.all([
+                            gigaSupabase.from('withdraw_requests').select('*').order('created_at', { ascending: false }),
+                            gigaSupabase.from('job_submissions').select('*').order('created_at', { ascending: false })
+                        ]);
+                        if (w.error) console.warn('Admin withdraw load:', w.error);
+                        if (j.error) console.warn('Admin job load:', j.error);
+                        this.adminWithdrawRequests = w.data || [];
+                        this.adminJobRequests = j.data || [];
+                    } finally {
+                        this.adminLoading = false;
+                        this.$nextTick(() => { if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons(); });
+                    }
+                },
+
+                async approveJobRequest(id) {
+                    const item = this.adminJobRequests.find(x => x.id === id);
+                    if (!item || item.status !== 'Menunggu Verifikasi') return;
+                    const nominal = Number(item.reward || 0);
+                    const { data: profile, error: profileError } = await gigaSupabase.from('profiles').select('saldo,total_penghasilan').eq('id', item.user_id).single();
+                    if (profileError) { this.showToast('Profil pengguna tidak ditemukan.', 'error'); return; }
+                    const { error: updateError } = await gigaSupabase.from('profiles').update({
+                        saldo: Number(profile.saldo || 0) + nominal,
+                        total_penghasilan: Number(profile.total_penghasilan || 0) + nominal
+                    }).eq('id', item.user_id);
+                    if (updateError) { this.showToast('Gagal menambahkan saldo.', 'error'); return; }
+                    const { error } = await gigaSupabase.from('job_submissions').update({ status: 'Berhasil', reviewed_at: new Date().toISOString() }).eq('id', id);
+                    if (error) { this.showToast('Saldo sudah diproses, tetapi status job gagal diperbarui.', 'error'); return; }
+                    item.status = 'Berhasil';
+                    this.showToast(`Setoran Gmail ${item.username || item.user_email} disetujui. Saldo ditambahkan.`, 'success');
+                    await this.loadAdminRequests();
+                },
+
+                async rejectJobRequest(id) {
+                    const { error } = await gigaSupabase.from('job_submissions').update({ status: 'Ditolak', reviewed_at: new Date().toISOString() }).eq('id', id);
+                    if (error) { this.showToast('Gagal menolak setoran Gmail.', 'error'); return; }
+                    this.showToast('Setoran Gmail ditolak.', 'success');
+                    await this.loadAdminRequests();
+                },
+
+                async approveWithdrawRequest(id) {
+                    const item = this.adminWithdrawRequests.find(x => x.id === id);
+                    if (!item || item.status !== 'Menunggu Verifikasi') return;
+                    const { data: profile, error: profileError } = await gigaSupabase.from('profiles').select('saldo').eq('id', item.user_id).single();
+                    if (profileError) { this.showToast('Profil pengguna tidak ditemukan.', 'error'); return; }
+                    const saldo = Number(profile.saldo || 0);
+                    const jumlah = Number(item.jumlah || 0);
+                    if (saldo < jumlah) {
+                        this.showToast('Saldo pengguna sudah tidak mencukupi.', 'error');
+                        return;
+                    }
+                    const { error: balanceError } = await gigaSupabase.from('profiles').update({ saldo: saldo - jumlah }).eq('id', item.user_id);
+                    if (balanceError) { this.showToast('Gagal mengurangi saldo pengguna.', 'error'); return; }
+                    const { error } = await gigaSupabase.from('withdraw_requests').update({ status: 'Berhasil', reviewed_at: new Date().toISOString() }).eq('id', id);
+                    if (error) { this.showToast('Saldo sudah diproses, tetapi status penarikan gagal diperbarui.', 'error'); return; }
+                    item.status = 'Berhasil';
+                    this.showToast(`Penarikan ${item.username || item.user_email} disetujui.`, 'success');
+                    await this.loadAdminRequests();
+                },
+
+                async rejectWithdrawRequest(id) {
+                    const { error } = await gigaSupabase.from('withdraw_requests').update({ status: 'Ditolak', reviewed_at: new Date().toISOString() }).eq('id', id);
+                    if (error) { this.showToast('Gagal menolak penarikan.', 'error'); return; }
+                    this.showToast('Penarikan ditolak.', 'success');
+                    await this.loadAdminRequests();
+                },
+
+                async sendChatMessage() {
+                    const text = this.newChatMessage.trim();
+                    if (!text) return;
+                    if (!window.gigaSupabase || !this.currentUser?.id) {
+                        this.showToast('Silakan login terlebih dahulu.', 'error');
+                        return;
+                    }
+                    const { error } = await gigaSupabase.from('forum_messages').insert({
+                      user_id: this.currentUser.id,
+                      text
+                    });
+                    if (error) {
+                      console.error('Forum send:', error);
+                      this.showToast('Pesan gagal dikirim: ' + error.message, 'error');
+                      return;
+                    }
+                    this.newChatMessage = '';
+                }
+            }
+        }
+    </script>
+
+<script>
+/*
+ * YANNJOB EmailJS integration.
+ * Public key is safe to expose in frontend. Do NOT put private/server secrets here.
+ *
+ * To actually send email, fill:
+ *   YANNJOB_EMAILJS_SERVICE_ID
+ *   YANNJOB_EMAILJS_WELCOME_TEMPLATE_ID
+ *   YANNJOB_EMAILJS_RESET_TEMPLATE_ID
+ * with IDs from your EmailJS dashboard.
+ */
+window.YANNJOB_EMAILJS_SERVICE_ID = "";
+window.YANNJOB_EMAILJS_WELCOME_TEMPLATE_ID = "";
+window.YANNJOB_EMAILJS_RESET_TEMPLATE_ID = "";
+
+window.gigajobSendEmail = async function(templateId, params) {
+  if (!window.emailjs || !window.YANNJOB_EMAILJS_SERVICE_ID || !templateId) {
+    return { ok: false, skipped: true };
+  }
+  try {
+    await emailjs.send(
+      window.YANNJOB_EMAILJS_SERVICE_ID,
+      templateId,
+      params
+    );
+    return { ok: true };
+  } catch (err) {
+    console.error("EmailJS error:", err);
+    return { ok: false, error: err };
+  }
+};
+
+window.gigajobWelcomeEmail = function(user) {
+  return window.gigajobSendEmail(
+    window.YANNJOB_EMAILJS_WELCOME_TEMPLATE_ID,
+    {
+      to_name: user.name || user.username || "Pengguna",
+      to_email: user.email || "",
+      app_name: "YANNJOB"
+    }
+  );
+};
+</script>
+
+
+<script>
+window.dispatchYANNJOBWelcome = async function(user) {
+  try {
+    if (user && user.email) {
+      await window.gigajobWelcomeEmail(user);
+    }
+  } catch (e) {
+    console.error("Welcome email failed:", e);
+  }
+};
+</script>
+
+
+<!-- YANNJOB: Password reset from Profile -->
+<style>
+#gigajob-profile-security {
+  margin-top: 18px;
+}
+.gj-security-card {
+  border: 1px solid rgba(148,163,184,.22);
+  border-radius: 18px;
+  padding: 18px;
+  background: rgba(15,23,42,.04);
+}
+.dark .gj-security-card { background: rgba(15,23,42,.55); }
+.gj-security-title { font-weight: 700; margin-bottom: 6px; }
+.gj-security-desc { font-size: 13px; opacity: .72; margin-bottom: 14px; }
+.gj-reset-btn {
+  border: 0; border-radius: 12px; padding: 11px 15px;
+  background: #0bc5ea; color: white; font-weight: 700; cursor: pointer;
+}
+.gj-reset-btn:hover { filter: brightness(.95); }
+#gj-reset-modal {
+  position: fixed; inset: 0; z-index: 99999; display: none;
+  align-items: center; justify-content: center; padding: 18px;
+  background: rgba(2,6,23,.65); backdrop-filter: blur(5px);
+}
+#gj-reset-modal.open { display: flex; }
+.gj-reset-box {
+  width: min(430px, 100%); background: white; color: #0f172a;
+  border-radius: 22px; padding: 22px; box-shadow: 0 25px 80px rgba(0,0,0,.28);
+}
+.dark .gj-reset-box { background: #0f172a; color: #f8fafc; }
+.gj-reset-box input {
+  width: 100%; margin: 8px 0 14px; padding: 12px 13px;
+  border-radius: 12px; border: 1px solid #cbd5e1; outline: none;
+  background: transparent; color: inherit;
+}
+.dark .gj-reset-box input { border-color: #334155; }
+.gj-reset-actions { display:flex; gap:10px; justify-content:flex-end; }
+.gj-reset-cancel {
+  border: 1px solid #cbd5e1; background: transparent; color: inherit;
+  border-radius: 12px; padding: 10px 14px; cursor:pointer;
+}
+</style>
+
+
+<div id="gj-reset-modal" role="dialog" aria-modal="true" aria-labelledby="gj-reset-title">
+  <div class="gj-reset-box">
+    <h3 id="gj-reset-title" style="font-size:20px;font-weight:800;margin:0 0 6px">
+      Reset Password
+    </h3>
+    <p style="font-size:13px;opacity:.72;margin:0 0 14px">
+      Masukkan email akunmu. Jika terdaftar, instruksi reset akan dikirim melalui EmailJS.
+    </p>
+
+    <label for="gj-reset-email" style="font-size:13px;font-weight:700">Email</label>
+    <input id="gj-reset-email" type="email" autocomplete="email"
+           placeholder="contoh: anda@gmail.com">
+
+    <div class="gj-reset-actions">
+      <button type="button" class="gj-reset-cancel" onclick="YANNJOBCloseProfileReset()">
+        Batal
+      </button>
+      <button type="button" class="gj-reset-btn" onclick="YANNJOBSendProfileReset()">
+        Kirim Reset
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.YANNJOBOpenProfileReset = function () {
+  const modal = document.getElementById("gj-reset-modal");
+  const email = document.getElementById("gj-reset-email");
+  if (modal) modal.classList.add("open");
+
+  // Try to prefill the currently logged-in user's email.
+  try {
+    const candidates = [
+      localStorage.getItem("gigajob_user"),
+      localStorage.getItem("currentUser"),
+      localStorage.getItem("user")
+    ];
+    for (const raw of candidates) {
+      if (!raw) continue;
+      const u = JSON.parse(raw);
+      if (u && u.email) {
+        email.value = u.email;
+        break;
+      }
+    }
+  } catch (_) {}
+
+  setTimeout(() => email && email.focus(), 80);
+};
+
+window.YANNJOBCloseProfileReset = function () {
+  const modal = document.getElementById("gj-reset-modal");
+  if (modal) modal.classList.remove("open");
+};
+
+window.YANNJOBSendProfileReset = async function () {
+  const emailEl = document.getElementById("gj-reset-email");
+  const email = (emailEl.value || "").trim();
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert("Masukkan alamat email yang valid.");
+    return;
+  }
+
+  if (typeof window.gigajobSendEmail !== "function") {
+    alert("Modul EmailJS belum tersedia.");
+    return;
+  }
+
+  const result = await window.gigajobSendEmail(
+    window.YANNJOB_EMAILJS_RESET_TEMPLATE_ID,
+    {
+      to_email: email,
+      app_name: "YANNJOB",
+      reset_type: "password"
+    }
+  );
+
+  if (result && result.ok) {
+    alert("Instruksi reset password berhasil dikirim. Silakan cek email.");
+    window.YANNJOBCloseProfileReset();
+  } else if (result && result.skipped) {
+    alert("EmailJS belum dikonfigurasi. Isi Service ID dan Reset Template ID terlebih dahulu.");
+  } else {
+    alert("Gagal mengirim email reset. Periksa konfigurasi EmailJS.");
+  }
+};
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") window.YANNJOBCloseProfileReset();
+});
+</script>
+
+</body>
+</html>
