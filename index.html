@@ -1063,7 +1063,10 @@
                     const email = this.forgotEmail.trim().toLowerCase();
                     if (!email) { this.showToast('Masukkan alamat email dengan benar!', 'error'); return; }
                     if (!window.gigaSupabase) { this.showToast('Supabase belum dikonfigurasi.', 'error'); return; }
-                    const redirectTo = `${location.origin}${location.pathname}?reset=1`;
+                    // Always return to the production YANNJOB domain, even when the app
+                    // is being tested from localhost. This prevents reset links from
+                    // pointing to localhost:3000.
+                    const redirectTo = 'https://yannjob.vercel.app/?reset=1';
                     const { error } = await gigaSupabase.auth.resetPasswordForEmail(email, { redirectTo });
                     if (error) { this.showToast(error.message || 'Gagal mengirim email reset.', 'error'); return; }
                     this.showToast('Jika email terdaftar, link reset sudah dikirim. Cek Gmail.', 'success');
@@ -1081,7 +1084,12 @@
                     const { data, error } = await gigaSupabase.auth.signUp({
                         email: f.email.trim().toLowerCase(),
                         password: f.password,
-                        options: { data: { name: f.name.trim(), username: f.username.trim() } }
+                        options: {
+                            data: { name: f.name.trim(), username: f.username.trim() },
+                            // Email verification must return to the production domain,
+                            // not the localhost URL used during local development.
+                            emailRedirectTo: 'https://yannjob.vercel.app/'
+                        }
                     });
                     if (error) { this.showToast(error.message || 'Pendaftaran gagal.', 'error'); return; }
                     if (data.user) {
